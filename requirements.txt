@@ -1,0 +1,2 @@
+# Only needed for launch/result retrieval. Planning and the local tests use stdlib.
+boto3==1.43.127

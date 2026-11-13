@@ -1,0 +1,19 @@
+{
+  "printWidth": 100,
+  "tabWidth": 2,
+  "useTabs": false,
+  "singleQuote": true,
+  "endOfLine": "lf",
+  "proseWrap": "always",
+  "embeddedLanguageFormatting": "off",
+  "plugins": ["@prettier/plugin-xml"],
+  "overrides": [
+    {
+      "files": "*.svg",
+      "options": {
+        "parser": "xml",
+        "xmlWhitespaceSensitivity": "preserve"
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+name: Bug report
+description: Report a reproducible PodVigil problem without private data.
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Read SUPPORT.md for ordinary bugs. For security problems, follow the private reporting
+        instructions in SECURITY.md before sharing details. Do not post keys, raw ledgers or account
+        identifiers.
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: PodVigil version, Python version, OS and installation method.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Sanitized command and job file; expected and observed behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Result and resource state
+      description:
+        Exit code and redacted closing Pod/volume lines. Never relaunch an uncertain job just to
+        reproduce it.

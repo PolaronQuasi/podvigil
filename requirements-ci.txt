@@ -1,0 +1,6 @@
+# Build and lint tools; runtime dependencies remain in requirements.lock.txt.
+build==1.6.1
+setuptools==84.2.1
+wheel==0.48.0
+twine==7.0.0
+ruff==0.17.5

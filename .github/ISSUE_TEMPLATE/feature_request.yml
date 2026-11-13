@@ -1,0 +1,17 @@
+name: Feature request
+description: Propose a concrete improvement to PodVigil.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe the workflow and what currently gets in the way.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Proposed behavior and tradeoffs
+      description: Include any effect on cost, data recovery or resource ownership.
+    validations:
+      required: true

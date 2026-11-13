@@ -1,0 +1,159 @@
+name: Verify PodVigil
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PYTHONDONTWRITEBYTECODE: '1'
+  PIP_DISABLE_PIP_VERSION_CHECK: '1'
+  PAID_SMOKE_ACCEPT_CHARGES: 'no'
+
+jobs:
+  quality:
+    if: github.server_url == 'https://github.com'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-ci.txt
+      - run: python tools/ci.py audit
+      - run: python -m compileall -q src tests tools examples managed_run.py
+      - run: ruff check --select E9,F63,F7,F82 src tests tools examples managed_run.py
+      - run: python tools/format_files.py --check --python-only
+      - run: python tools/check_workflows.py
+      - run: python tools/check_docs.py
+
+  tests:
+    if: github.server_url == 'https://github.com'
+    name: Tests (${{ matrix.os }}, Python ${{ matrix.python }}, ${{ matrix.dependencies }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-24.04
+            python: '3.10'
+            dependencies: none
+          - os: ubuntu-24.04
+            python: '3.12'
+            dependencies: lock
+          - os: ubuntu-24.04
+            python: '3.14'
+            dependencies: lock
+          - os: windows-2025
+            python: '3.12'
+            dependencies: lock
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Create the project environment
+        run: python -m venv .venv
+      - name: Linux locked dependencies
+        if: runner.os == 'Linux' && matrix.dependencies == 'lock'
+        run: .venv/bin/python -m pip install -r requirements.lock.txt
+      - name: Windows locked dependencies
+        if: runner.os == 'Windows'
+        run: .venv/Scripts/python.exe -m pip install -r requirements.lock.txt
+      - name: Linux unit, fake cloud and process tests
+        if: runner.os == 'Linux'
+        run: .venv/bin/python -B tools/ci.py test
+      - name: Windows unit, fake cloud and process tests
+        if: runner.os == 'Windows'
+        run: .venv/Scripts/python.exe -B tools/ci.py test
+      - name: Preserve test evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: tests-${{ matrix.os }}-py${{ matrix.python }}-${{ matrix.dependencies }}
+          path: output/ci/
+          if-no-files-found: error
+          retention-days: 14
+
+  containers:
+    if: github.server_url == 'https://github.com'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      REVIEW_IMAGE: python:3.13.7-slim-bookworm@sha256:adafcc17694d715c905b4c7bebd96907a1fd5cf183395f0ebc4d3428bd22d92d
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Prepare the pinned test image
+        run: |
+          docker pull "$REVIEW_IMAGE"
+          echo "PODVIGIL_REVIEW_DOCKER_IMAGE=$(docker image inspect --format '{{.Id}}' "$REVIEW_IMAGE")" >> "$GITHUB_ENV"
+      - name: Pod lifecycle and isolation tests (containers have no network)
+        run: python -B tools/ci.py test --lane container
+      - name: Clean Linux root suite, with and without init
+        run: python -B tools/ci.py container-suite --image "$PODVIGIL_REVIEW_DOCKER_IMAGE"
+      - name: Preserve container test evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: container-tests
+          path: output/ci/
+          if-no-files-found: error
+          retention-days: 14
+
+  distributions:
+    if: github.server_url == 'https://github.com'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-ci.txt
+      - name: Build wheel and source distribution
+        run: python -m build --no-isolation
+      - run: twine check --strict dist/*.whl dist/*.tar.gz
+      - name: Test installed commands and every example without credentials
+        run: python -B tools/ci.py smoke
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: distributions-${{ github.sha }}
+          path: |
+            dist/*.whl
+            dist/*.tar.gz
+            dist/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 14
+
+  required:
+    name: All checks passed
+    if: always() && github.server_url == 'https://github.com'
+    needs: [quality, tests, containers, distributions]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    env:
+      QUALITY: ${{ needs.quality.result }}
+      TESTS: ${{ needs.tests.result }}
+      CONTAINERS: ${{ needs.containers.result }}
+      DISTRIBUTIONS: ${{ needs.distributions.result }}
+    steps:
+      - run: |
+          test "$QUALITY" = success
+          test "$TESTS" = success
+          test "$CONTAINERS" = success
+          test "$DISTRIBUTIONS" = success
