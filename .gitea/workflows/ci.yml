@@ -1,0 +1,176 @@
+# Continuous integration for Gitea Actions.
+#
+# Read "Continuous integration" in docs/DEVELOPMENT.md and .gitea/runner/README.md for setup.
+# It needs a runner for the ubuntu-latest label and a
+# Windows host runner with the label "windows", Python 3.12 and Node.js on its PATH, and a
+# Linux host runner labelled "linux-docker" with Docker and the named Python image already installed.
+#
+# It never receives Runpod credentials, pulls container images, or runs a paid job.
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+env:
+  RUNPOD_API_KEY: ''
+  RUNPOD_S3_ACCESS_KEY: ''
+  RUNPOD_S3_SECRET_KEY: ''
+  PAID_SMOKE_JOB: ''
+  PAID_SMOKE_ACCEPT_CHARGES: ''
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Every Python file compiles
+        run: python -m compileall -q src tests examples managed_run.py
+      - name: No syntax errors or undefined names
+        run: |
+          python -m pip install ruff==0.17.5
+          ruff check --select E9,F63,F7,F82 src tests examples managed_run.py
+      - name: Consistent Python formatting
+        run: python tools/format_files.py --check --python-only
+      - name: No whitespace errors in maintained files
+        run: >-
+          git diff --check "$(git hash-object -t tree /dev/null)" HEAD -- .
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: No credential files are tracked
+        run: |
+          found="$(git ls-files | grep -E '(^|/)(\.env(\..*)?|credentials\.env)$' | grep -vx '\.env\.example' || true)"
+          if [ -n "$found" ]; then
+            echo "Tracked credential files:"
+            echo "$found"
+            exit 1
+          fi
+      - name: No private keys or Runpod-shaped keys in tracked files
+        run: |
+          scan_status=0
+          git grep -lIE -e '-----BEGIN [A-Z ]*PRIVATE KEY-----' -e 'rpa_[A-Za-z0-9]{20,}' -e 'rps_[A-Za-z0-9]{20,}' -- . || scan_status=$?
+          if [ "$scan_status" -eq 0 ]; then
+            echo "Possible secrets in the filenames above."
+            exit 1
+          fi
+          if [ "$scan_status" -ne 1 ]; then
+            exit "$scan_status"
+          fi
+
+  linux:
+    name: Linux Python ${{ matrix.python }} (${{ matrix.dependencies }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - python: '3.12'
+            dependencies: lock
+          - python: '3.10'
+            dependencies: lock
+          - python: '3.10'
+            dependencies: none
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Clean environment for this lane
+        run: python -m venv --clear .venv
+      - name: Install the lock
+        if: matrix.dependencies == 'lock'
+        run: .venv/bin/python -m pip install -r requirements.lock.txt
+      - name: Verify the fresh lane has no SDK
+        if: matrix.dependencies == 'none'
+        run:
+          .venv/bin/python -c "import importlib.util; assert importlib.util.find_spec('boto3') is
+          None"
+      - name: Test suite
+        run: .venv/bin/python -B -m unittest discover -s tests -v
+
+  linux-containers:
+    runs-on: linux-docker
+    env:
+      PODVIGIL_CI_PYTHON_IMAGE: python:3.13.7-slim-bookworm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Identify the already-installed Python image
+        shell: bash
+        run: |
+          image="$(docker image inspect --format '{{.Id}}' "$PODVIGIL_CI_PYTHON_IMAGE")"
+          test -n "$image"
+          printf 'PODVIGIL_REVIEW_DOCKER_IMAGE=%s\n' "$image" >> "$GITHUB_ENV"
+          printf 'Linux test image: %s (%s)\n' "$PODVIGIL_CI_PYTHON_IMAGE" "$image"
+          docker run --rm --pull=never --network none --entrypoint python3 "$image" --version
+      - name: Fresh Linux suites with and without init, without networking
+        shell: bash
+        run: |
+          clean="$(mktemp -d)"
+          logs="$(mktemp -d)"
+          trap 'rm -rf -- "$clean" "$logs"' EXIT
+          git archive HEAD | tar -x -C "$clean"
+          pids=()
+          for mode in no-init init; do
+            flags=()
+            if [ "$mode" = init ]; then flags+=(--init); fi
+            docker run --rm --pull=never --network none "${flags[@]}" \
+              --mount "type=bind,source=$clean,target=/src,readonly" --entrypoint sh \
+              "$PODVIGIL_REVIEW_DOCKER_IMAGE" \
+              -c 'cp -r /src /work && cd /work && python3 -B -m unittest discover -s tests -v' \
+              > "$logs/$mode.log" 2>&1 &
+            pids+=("$!")
+          done
+          status=0
+          for pid in "${pids[@]}"; do wait "$pid" || status=1; done
+          for mode in no-init init; do
+            printf 'Linux suite container mode: %s\n' "$mode"
+            cat "$logs/$mode.log"
+          done
+          exit "$status"
+      - name: Pod container regressions, without networking
+        shell: bash
+        run: python -B -m unittest discover -s tests/container -t . -v
+
+  windows:
+    runs-on: windows
+    steps:
+      - uses: actions/checkout@v4
+      # cmd, not Windows PowerShell 5.1: PowerShell can turn a native command's stderr into an error.
+      - name: Project venv with the lock (the integration tests need it)
+        shell: cmd
+        run:
+          python -m venv .venv && .venv\Scripts\python.exe -m pip install -r requirements.lock.txt
+      - name: Test suite
+        shell: cmd
+        run: .venv\Scripts\python.exe -B -m unittest discover -s tests -v
+
+  wheel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build the wheel
+        run: python -m pip wheel --no-deps --wheel-dir dist .
+      - name: Install and exercise the wheel outside the checkout
+        working-directory: /tmp
+        shell: bash
+        run: |
+          wheel_check="$(mktemp -d)"
+          trap 'rm -rf -- "$wheel_check"' EXIT
+          python -m venv "$wheel_check/env"
+          "$wheel_check/env/bin/python" -m pip install -r "$GITHUB_WORKSPACE/requirements.lock.txt"
+          "$wheel_check/env/bin/python" -m pip install --no-deps "$GITHUB_WORKSPACE"/dist/*.whl
+          cd "$wheel_check"
+          "$wheel_check/env/bin/python" -I -B "$GITHUB_WORKSPACE/tests/integration/wheel_smoke.py" -v

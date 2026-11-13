@@ -1,0 +1,16 @@
+# Dependencies, private state and build artifacts are never formatting inputs.
+node_modules/
+.venv*/
+output/
+dist/
+build/
+downloads/
+.env
+.env.*
+!.env.example
+
+# npm maintains the lockfile; preserve the canonical license and fixture bytes.
+package-lock.json
+LICENSE
+NOTICE
+**/*.csv

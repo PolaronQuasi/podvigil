@@ -1,0 +1,23 @@
+log:
+  level: info
+runner:
+  file: .runner
+  capacity: 3
+  timeout: 45m
+  shutdown_timeout: 30s
+  env_file: ''
+  envs:
+    RUNPOD_API_KEY: ''
+    RUNPOD_S3_ACCESS_KEY: ''
+    RUNPOD_S3_SECRET_KEY: ''
+    PAID_SMOKE_JOB: ''
+    PAID_SMOKE_ACCEPT_CHARGES: ''
+  labels:
+    - ubuntu-latest:host
+    - linux-docker:host
+cache:
+  enabled: false
+container:
+  force_pull: false
+host:
+  workdir_parent: /var/lib/docker/volumes/podvigil-ci-work/_data/jobs

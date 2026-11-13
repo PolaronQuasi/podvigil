@@ -1,0 +1,18 @@
+{
+  "image": "runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404",
+  "gpu_id": "NVIDIA GeForce RTX 3090",
+  "data_center_id": "EU-CZ-1",
+  "gpu_count": 1,
+  "min_cuda_version": "12.8",
+  "max_compute_usd_per_hour": 0.6,
+  "max_compute_usd": 0.25,
+  "disk_gb": 30,
+  "volume_gb": 10,
+  "max_runtime_seconds": 1200,
+  "startup_timeout_seconds": 300,
+  "finalize_grace_seconds": 120,
+  "inputs": [{ "local": "train.py", "remote": "train.py" }],
+  "workload_env": { "TRAIN_SECONDS": "600", "CHECKPOINT_SECONDS": "60" },
+  "command": ["python3", "-u", "-m", "train"],
+  "required_artifacts": ["checkpoints/latest.pt", "progress.json"]
+}

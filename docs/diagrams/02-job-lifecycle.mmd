@@ -1,0 +1,43 @@
+---
+title: One job from validation to verified cleanup
+---
+flowchart LR
+  accTitle: PodVigil job lifecycle
+  accDescr: Validate the job before spending. Arm the watchdog, create owned storage and upload inputs, then create a single Secure Cloud Pod and verify its identity. Job completion, failure, cancellation or the runtime deadline starts finalization and compute cleanup. Retrieve results after compute absence is proven. Delete storage only after verified complete backup; otherwise retain it and report billing uncertainty.
+
+  subgraph PREPARE["PREPARE"]
+    direction TB
+    PLAN["Validate job, limits and live placement"] --> PREP["Arm watchdog<br/>Create volume and upload inputs"]
+    PREP --> CREATE["Create one Pod<br/>Reconcile an ambiguous response"]
+    CREATE --> VERIFY["Verify ownership, image, price and inputs"]
+  end
+
+  subgraph EXECUTE["RUN AND STOP COMPUTE"]
+    direction TB
+    RUN["Release workload"]
+    RUN --> END["Success, failure, cancellation<br/>or runtime deadline"]
+    END --> SNAP["Stop writers and snapshot outputs<br/>Bounded finalization"]
+    SNAP --> DELETE["Attempt Pod termination<br/>Even if finalization fails"]
+    DELETE --> ABSENT{"Compute absence<br/>verified?"}
+    ABSENT -->|"unknown"| UNKNOWN["Continue cleanup or report uncertainty<br/>Do not claim billing ended"]
+  end
+
+  subgraph RECOVERY["RECOVER AND CLOSE"]
+    direction TB
+    RECOVER["Retrieve and verify backup<br/>Audit every volume object"]
+    RECOVER --> COMPLETE{"Complete and<br/>consistent?"}
+    COMPLETE -->|"yes"| STORAGE["Delete owned volume<br/>Verify its absence"]
+    COMPLETE -->|"no"| KEEP["Retain storage and recovery records<br/>Storage may still bill"]
+    STORAGE --> DONE["Report workload outcome<br/>and both resource states"]
+  end
+
+  PREPARE --> EXECUTE
+  EXECUTE -->|"only after compute absence is verified"| RECOVERY
+
+  classDef primary fill:#eaf2ff,stroke:#3864a2,color:#142b49,stroke-width:2px;
+  classDef store fill:#e7f5ef,stroke:#35745d,color:#163c2f,stroke-width:1.5px;
+  classDef caution fill:#fff5dc,stroke:#b58a25,color:#483a18,stroke-width:2px;
+
+  class PLAN,PREP,CREATE,VERIFY,RUN,END,SNAP,DELETE,RECOVER,STORAGE primary;
+  class DONE store;
+  class UNKNOWN,KEEP caution;

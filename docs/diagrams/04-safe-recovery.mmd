@@ -1,0 +1,29 @@
+---
+title: Recover an existing job without guessing ownership
+---
+flowchart TB
+  accTitle: PodVigil safe recovery
+  accDescr: Recovery starts from an existing job ledger, verifies ownership, and keeps the original deadline. Unknown creation results are reconciled without another create. Unproven ownership never authorizes deletion. Compute cleanup is verified before restoring outputs, and incomplete backup retains storage.
+
+  START["Open existing job ledger<br/>Keep original deadline"] --> OWN{"Ownership evidence<br/>established?"}
+  OWN -->|"no or ambiguous"| RECON["Reconcile receipts, identity and inventory<br/>Never blindly repeat create"]
+  RECON --> UNKNOWN["Unresolved: preserve records<br/>Operator inspection; billing unverified"]
+
+  OWN -->|"yes"| COMPUTE{"Owned Pod<br/>proven absent?"}
+  COMPUTE -->|"no"| DELETE["Attempt owned-Pod deletion<br/>Retry bounded transient failures"]
+  DELETE --> READ["Fresh read-back and inventory evidence"]
+  READ -->|"unavailable or ambiguous"| UNKNOWN
+  READ -->|"verified"| BACKUP
+  COMPUTE -->|"yes"| BACKUP["Recover outputs and verify backup"]
+
+  BACKUP --> AUDIT{"Whole volume<br/>accounted for?"}
+  AUDIT -->|"yes"| REMOVE["Delete owned volume<br/>Verify absence and report"]
+  AUDIT -->|"no"| RETAIN["Retain volume<br/>Export accessible data without deleting source"]
+
+  classDef primary fill:#eaf2ff,stroke:#3864a2,color:#142b49,stroke-width:2px;
+  classDef store fill:#e7f5ef,stroke:#35745d,color:#163c2f,stroke-width:1.5px;
+  classDef caution fill:#fff5dc,stroke:#b58a25,color:#483a18,stroke-width:2px;
+
+  class START,RECON,DELETE,READ,BACKUP primary;
+  class REMOVE store;
+  class UNKNOWN,RETAIN caution;

@@ -1,0 +1,1257 @@
+{
+  "fallback_to_second_candidate": {
+    "contradictions": [],
+    "exit_code": 0,
+    "last_lines": [
+      "Job ledger: <ledger>",
+      "Pod testpod: deleted; its absence was verified.",
+      "Volume testvolume: deleted; its absence was verified. Nothing from this job remains."
+    ],
+    "ledgers": [
+      {
+        "files": [
+          "control.lock",
+          "controller-heartbeat.json",
+          "downloads/collect.lock",
+          "downloads/volume-audit-*/00000001.bin",
+          "downloads/volume-audit-*/00000002.bin",
+          "downloads/volume-audit-*/objects.json",
+          "events.jsonl",
+          "events.lock",
+          "job.json",
+          "launch-failure.json",
+          "pod-creation-state.json",
+          "pod-dispatch.json",
+          "pod-intent.json",
+          "pod-rejected.json",
+          "recovery.lock",
+          "stop-request.json",
+          "summary.json",
+          "volume-audit.json",
+          "volume-creation-state.json",
+          "volume-deleted.json",
+          "volume-dispatch.json",
+          "volume-intent.json",
+          "volume-receipt.json",
+          "watchdog.json",
+          "watchdog.lock",
+          "watchdog.log"
+        ],
+        "states": {
+          "job.json": {
+            "config_keys": [
+              "agent_stale_seconds",
+              "cloud",
+              "command",
+              "controller_stale_seconds",
+              "data_center_id",
+              "disk_gb",
+              "finalize_grace_seconds",
+              "gpu_count",
+              "gpu_id",
+              "image",
+              "inputs",
+              "max_compute_usd",
+              "max_compute_usd_per_hour",
+              "max_runtime_seconds",
+              "min_cuda_version",
+              "poll_seconds",
+              "preparation_timeout_seconds",
+              "required_artifacts",
+              "self_termination_grace_seconds",
+              "self_termination_probe",
+              "startup_timeout_seconds",
+              "volume_gb",
+              "volume_type",
+              "workload_env"
+            ],
+            "inputs": ["data/table.csv"],
+            "keys": [
+              "auth_fingerprint_salt",
+              "auth_key_fingerprint",
+              "config",
+              "created_utc",
+              "deadline_epoch",
+              "input_manifest",
+              "inputs",
+              "job_id",
+              "ledger_schema",
+              "pod_name",
+              "preparation_deadline_epoch",
+              "prior_pod_ids",
+              "prior_volume_ids",
+              "quote",
+              "runner_version",
+              "startup_deadline_epoch",
+              "volume_name"
+            ]
+          },
+          "launch-failure.json": {
+            "cleanup_error": null,
+            "error_type": "ApiError",
+            "http_status": 400,
+            "message": "Runpod POST /pods: HTTP 400: Bad Request; There are no longe",
+            "phase": "pod_create"
+          },
+          "pod-creation-state.json": "dispatching",
+          "pod-rejected.json": {
+            "kind": "pod",
+            "not_sent": false,
+            "status": 400
+          },
+          "stop-request.json": "recover/finish cleanup",
+          "summary.json": {
+            "backup_not_required": true,
+            "keys": [
+              "backup_not_required",
+              "completed_utc",
+              "job_id",
+              "pod_created",
+              "pod_evidence",
+              "pod_termination_verified",
+              "training_outcome",
+              "volume_deletion_verified",
+              "volume_evidence"
+            ],
+            "pod_created": false,
+            "pod_termination_verified": true,
+            "training_outcome": "not_started",
+            "volume_deletion_verified": true
+          },
+          "volume-audit.json": {
+            "mode": "pristine_inputs",
+            "objects": [
+              "inputs/data/table.csv input",
+              "jobs/<job>/control/inputs.json input_manifest",
+              "managed-owner.json control"
+            ]
+          },
+          "volume-creation-state.json": "dispatching",
+          "volume-deleted.json": {
+            "delete_attempts": 1,
+            "id": "testvolume",
+            "observed_absent": null,
+            "verified": true
+          },
+          "volume-receipt.json": {
+            "id": "testvolume",
+            "kind": "volume"
+          },
+          "watchdog.json": {
+            "state": "no_pod_created"
+          }
+        }
+      },
+      {
+        "files": [
+          "control.lock",
+          "controller-heartbeat.json",
+          "downloads/artifact-manifest.json",
+          "downloads/artifacts/metrics.json",
+          "downloads/artifacts/model.bin",
+          "downloads/artifacts/result.json",
+          "downloads/artifacts/train.log",
+          "downloads/backup-verified.json",
+          "downloads/collect.lock",
+          "downloads/volume-audit-*/00000001.bin",
+          "downloads/volume-audit-*/00000002.bin",
+          "downloads/volume-audit-*/00000007.bin",
+          "downloads/volume-audit-*/00000008.bin",
+          "downloads/volume-audit-*/00000009.bin",
+          "downloads/volume-audit-*/00000010.bin",
+          "downloads/volume-audit-*/objects.json",
+          "events.jsonl",
+          "events.lock",
+          "job.json",
+          "pod-creation-state.json",
+          "pod-deleted.json",
+          "pod-dispatch.json",
+          "pod-intent.json",
+          "pod-receipt.json",
+          "recovery-handoff.json",
+          "recovery.lock",
+          "stop-request.json",
+          "summary.json",
+          "terminal-observed.json",
+          "training-released.json",
+          "volume-audit.json",
+          "volume-creation-state.json",
+          "volume-deleted.json",
+          "volume-dispatch.json",
+          "volume-intent.json",
+          "volume-receipt.json",
+          "watchdog.json",
+          "watchdog.lock",
+          "watchdog.log"
+        ],
+        "states": {
+          "downloads/artifact-manifest.json": [
+            "artifacts/metrics.json",
+            "artifacts/model.bin",
+            "artifacts/result.json",
+            "artifacts/train.log"
+          ],
+          "downloads/artifacts/result.json": {
+            "outcome": "success"
+          },
+          "downloads/backup-verified.json": {
+            "file_count": 4
+          },
+          "job.json": {
+            "config_keys": [
+              "agent_stale_seconds",
+              "cloud",
+              "command",
+              "controller_stale_seconds",
+              "data_center_id",
+              "disk_gb",
+              "finalize_grace_seconds",
+              "gpu_count",
+              "gpu_id",
+              "image",
+              "inputs",
+              "max_compute_usd",
+              "max_compute_usd_per_hour",
+              "max_runtime_seconds",
+              "min_cuda_version",
+              "poll_seconds",
+              "preparation_timeout_seconds",
+              "required_artifacts",
+              "self_termination_grace_seconds",
+              "self_termination_probe",
+              "startup_timeout_seconds",
+              "volume_gb",
+              "volume_type",
+              "workload_env"
+            ],
+            "inputs": ["data/table.csv"],
+            "keys": [
+              "auth_fingerprint_salt",
+              "auth_key_fingerprint",
+              "config",
+              "created_utc",
+              "deadline_epoch",
+              "input_manifest",
+              "inputs",
+              "job_id",
+              "ledger_schema",
+              "pod_name",
+              "preparation_deadline_epoch",
+              "prior_pod_ids",
+              "prior_volume_ids",
+              "quote",
+              "runner_version",
+              "startup_deadline_epoch",
+              "volume_name"
+            ]
+          },
+          "pod-creation-state.json": "dispatching",
+          "pod-deleted.json": {
+            "delete_attempts": 0,
+            "id": "testpod",
+            "observed_absent": null,
+            "verified": true
+          },
+          "pod-receipt.json": {
+            "id": "testpod",
+            "kind": "pod"
+          },
+          "recovery-handoff.json": {
+            "state": "complete"
+          },
+          "stop-request.json": "recover/finish cleanup",
+          "summary.json": {
+            "keys": [
+              "completed_utc",
+              "download_directory",
+              "job_id",
+              "pod_evidence",
+              "pod_termination_verified",
+              "self_termination_probe",
+              "training_outcome",
+              "volume_deletion_verified",
+              "volume_evidence"
+            ],
+            "pod_termination_verified": true,
+            "training_outcome": "success",
+            "volume_deletion_verified": true
+          },
+          "terminal-observed.json": {
+            "ownership_checked": false,
+            "source": "accepted_self_delete"
+          },
+          "volume-audit.json": {
+            "mode": "verified_backup",
+            "objects": [
+              "inputs/data/table.csv input",
+              "jobs/<job>/agent.json control",
+              "jobs/<job>/artifact-manifest.json control",
+              "jobs/<job>/artifacts/metrics.json artifact",
+              "jobs/<job>/artifacts/model.bin artifact",
+              "jobs/<job>/artifacts/result.json artifact",
+              "jobs/<job>/artifacts/train.log artifact",
+              "jobs/<job>/control/inputs.json input_manifest",
+              "jobs/<job>/control/self-delete.json control",
+              "jobs/<job>/start.json control",
+              "managed-owner.json control"
+            ]
+          },
+          "volume-creation-state.json": "dispatching",
+          "volume-deleted.json": {
+            "delete_attempts": 1,
+            "id": "testvolume",
+            "observed_absent": null,
+            "verified": true
+          },
+          "volume-receipt.json": {
+            "id": "testvolume",
+            "kind": "volume"
+          },
+          "watchdog.json": {
+            "reason": "terminal status and absence",
+            "state": "pod_deleted"
+          }
+        }
+      }
+    ],
+    "outcome": "success",
+    "remaining": {
+      "pods": 0,
+      "volumes": 0
+    },
+    "requests": {
+      "DELETE /network-volumes/<id>": 2,
+      "POST /network-volumes": 2,
+      "POST /pods": 2
+    }
+  },
+  "no_capacity_at_create": {
+    "contradictions": [],
+    "exit_code": 4,
+    "last_lines": [
+      "RUN FAILED: Runpod POST /pods: HTTP 400: Bad Request; There are no longer any instances available with the requested specifications. Please refresh and try again.",
+      "Pod: none was created (Runpod refused the request with HTTP 400).",
+      "Volume testvolume: deleted; its absence was verified. Nothing from this job remains."
+    ],
+    "ledgers": [
+      {
+        "files": [
+          "control.lock",
+          "controller-heartbeat.json",
+          "downloads/collect.lock",
+          "downloads/volume-audit-*/00000001.bin",
+          "downloads/volume-audit-*/00000002.bin",
+          "downloads/volume-audit-*/objects.json",
+          "events.jsonl",
+          "events.lock",
+          "job.json",
+          "launch-failure.json",
+          "pod-creation-state.json",
+          "pod-dispatch.json",
+          "pod-intent.json",
+          "pod-rejected.json",
+          "recovery.lock",
+          "stop-request.json",
+          "summary.json",
+          "volume-audit.json",
+          "volume-creation-state.json",
+          "volume-deleted.json",
+          "volume-dispatch.json",
+          "volume-intent.json",
+          "volume-receipt.json",
+          "watchdog.json",
+          "watchdog.lock",
+          "watchdog.log"
+        ],
+        "states": {
+          "job.json": {
+            "config_keys": [
+              "agent_stale_seconds",
+              "cloud",
+              "command",
+              "controller_stale_seconds",
+              "data_center_id",
+              "disk_gb",
+              "finalize_grace_seconds",
+              "gpu_count",
+              "gpu_id",
+              "image",
+              "inputs",
+              "max_compute_usd",
+              "max_compute_usd_per_hour",
+              "max_runtime_seconds",
+              "min_cuda_version",
+              "poll_seconds",
+              "preparation_timeout_seconds",
+              "required_artifacts",
+              "self_termination_grace_seconds",
+              "self_termination_probe",
+              "startup_timeout_seconds",
+              "volume_gb",
+              "volume_type",
+              "workload_env"
+            ],
+            "inputs": ["data/table.csv"],
+            "keys": [
+              "auth_fingerprint_salt",
+              "auth_key_fingerprint",
+              "config",
+              "created_utc",
+              "deadline_epoch",
+              "input_manifest",
+              "inputs",
+              "job_id",
+              "ledger_schema",
+              "pod_name",
+              "preparation_deadline_epoch",
+              "prior_pod_ids",
+              "prior_volume_ids",
+              "quote",
+              "runner_version",
+              "startup_deadline_epoch",
+              "volume_name"
+            ]
+          },
+          "launch-failure.json": {
+            "cleanup_error": null,
+            "error_type": "ApiError",
+            "http_status": 400,
+            "message": "Runpod POST /pods: HTTP 400: Bad Request; There are no longe",
+            "phase": "pod_create"
+          },
+          "pod-creation-state.json": "dispatching",
+          "pod-rejected.json": {
+            "kind": "pod",
+            "not_sent": false,
+            "status": 400
+          },
+          "stop-request.json": "recover/finish cleanup",
+          "summary.json": {
+            "backup_not_required": true,
+            "keys": [
+              "backup_not_required",
+              "completed_utc",
+              "job_id",
+              "pod_created",
+              "pod_evidence",
+              "pod_termination_verified",
+              "training_outcome",
+              "volume_deletion_verified",
+              "volume_evidence"
+            ],
+            "pod_created": false,
+            "pod_termination_verified": true,
+            "training_outcome": "not_started",
+            "volume_deletion_verified": true
+          },
+          "volume-audit.json": {
+            "mode": "pristine_inputs",
+            "objects": [
+              "inputs/data/table.csv input",
+              "jobs/<job>/control/inputs.json input_manifest",
+              "managed-owner.json control"
+            ]
+          },
+          "volume-creation-state.json": "dispatching",
+          "volume-deleted.json": {
+            "delete_attempts": 1,
+            "id": "testvolume",
+            "observed_absent": null,
+            "verified": true
+          },
+          "volume-receipt.json": {
+            "id": "testvolume",
+            "kind": "volume"
+          },
+          "watchdog.json": {
+            "state": "no_pod_created"
+          }
+        }
+      }
+    ],
+    "outcome": "no_capacity",
+    "remaining": {
+      "pods": 0,
+      "volumes": 0
+    },
+    "requests": {
+      "DELETE /network-volumes/<id>": 1,
+      "POST /network-volumes": 1,
+      "POST /pods": 1
+    }
+  },
+  "no_capacity_in_catalog": {
+    "contradictions": [],
+    "exit_code": 4,
+    "last_lines": [
+      "RUN FAILED: No confirmed Secure Cloud capacity in the selected data center (NVIDIA GeForce RTX 4090 in EU-RO-1). No Community fallback.",
+      "Pod: none was created.",
+      "Volume: none was created. Nothing from this run remains."
+    ],
+    "ledgers": [],
+    "outcome": "no_capacity",
+    "remaining": {
+      "pods": 0,
+      "volumes": 0
+    },
+    "requests": {}
+  },
+  "success_self_deleted": {
+    "contradictions": [],
+    "exit_code": 0,
+    "last_lines": [
+      "Job ledger: <ledger>",
+      "Pod testpod: deleted; its absence was verified.",
+      "Volume testvolume: deleted; its absence was verified. Nothing from this job remains."
+    ],
+    "ledgers": [
+      {
+        "files": [
+          "control.lock",
+          "controller-heartbeat.json",
+          "downloads/artifact-manifest.json",
+          "downloads/artifacts/metrics.json",
+          "downloads/artifacts/model.bin",
+          "downloads/artifacts/result.json",
+          "downloads/artifacts/train.log",
+          "downloads/backup-verified.json",
+          "downloads/collect.lock",
+          "downloads/volume-audit-*/00000001.bin",
+          "downloads/volume-audit-*/00000002.bin",
+          "downloads/volume-audit-*/00000007.bin",
+          "downloads/volume-audit-*/00000008.bin",
+          "downloads/volume-audit-*/00000009.bin",
+          "downloads/volume-audit-*/00000010.bin",
+          "downloads/volume-audit-*/objects.json",
+          "events.jsonl",
+          "events.lock",
+          "job.json",
+          "pod-creation-state.json",
+          "pod-deleted.json",
+          "pod-dispatch.json",
+          "pod-intent.json",
+          "pod-receipt.json",
+          "recovery-handoff.json",
+          "recovery.lock",
+          "stop-request.json",
+          "summary.json",
+          "terminal-observed.json",
+          "training-released.json",
+          "volume-audit.json",
+          "volume-creation-state.json",
+          "volume-deleted.json",
+          "volume-dispatch.json",
+          "volume-intent.json",
+          "volume-receipt.json",
+          "watchdog.json",
+          "watchdog.lock",
+          "watchdog.log"
+        ],
+        "states": {
+          "downloads/artifact-manifest.json": [
+            "artifacts/metrics.json",
+            "artifacts/model.bin",
+            "artifacts/result.json",
+            "artifacts/train.log"
+          ],
+          "downloads/artifacts/result.json": {
+            "outcome": "success"
+          },
+          "downloads/backup-verified.json": {
+            "file_count": 4
+          },
+          "job.json": {
+            "config_keys": [
+              "agent_stale_seconds",
+              "cloud",
+              "command",
+              "controller_stale_seconds",
+              "data_center_id",
+              "disk_gb",
+              "finalize_grace_seconds",
+              "gpu_count",
+              "gpu_id",
+              "image",
+              "inputs",
+              "max_compute_usd",
+              "max_compute_usd_per_hour",
+              "max_runtime_seconds",
+              "min_cuda_version",
+              "poll_seconds",
+              "preparation_timeout_seconds",
+              "required_artifacts",
+              "self_termination_grace_seconds",
+              "self_termination_probe",
+              "startup_timeout_seconds",
+              "volume_gb",
+              "volume_type",
+              "workload_env"
+            ],
+            "inputs": ["data/table.csv"],
+            "keys": [
+              "auth_fingerprint_salt",
+              "auth_key_fingerprint",
+              "config",
+              "created_utc",
+              "deadline_epoch",
+              "input_manifest",
+              "inputs",
+              "job_id",
+              "ledger_schema",
+              "pod_name",
+              "preparation_deadline_epoch",
+              "prior_pod_ids",
+              "prior_volume_ids",
+              "quote",
+              "runner_version",
+              "startup_deadline_epoch",
+              "volume_name"
+            ]
+          },
+          "pod-creation-state.json": "dispatching",
+          "pod-deleted.json": {
+            "delete_attempts": 0,
+            "id": "testpod",
+            "observed_absent": null,
+            "verified": true
+          },
+          "pod-receipt.json": {
+            "id": "testpod",
+            "kind": "pod"
+          },
+          "recovery-handoff.json": {
+            "state": "complete"
+          },
+          "stop-request.json": "recover/finish cleanup",
+          "summary.json": {
+            "keys": [
+              "completed_utc",
+              "download_directory",
+              "job_id",
+              "pod_evidence",
+              "pod_termination_verified",
+              "self_termination_probe",
+              "training_outcome",
+              "volume_deletion_verified",
+              "volume_evidence"
+            ],
+            "pod_termination_verified": true,
+            "training_outcome": "success",
+            "volume_deletion_verified": true
+          },
+          "terminal-observed.json": {
+            "ownership_checked": false,
+            "source": "accepted_self_delete"
+          },
+          "volume-audit.json": {
+            "mode": "verified_backup",
+            "objects": [
+              "inputs/data/table.csv input",
+              "jobs/<job>/agent.json control",
+              "jobs/<job>/artifact-manifest.json control",
+              "jobs/<job>/artifacts/metrics.json artifact",
+              "jobs/<job>/artifacts/model.bin artifact",
+              "jobs/<job>/artifacts/result.json artifact",
+              "jobs/<job>/artifacts/train.log artifact",
+              "jobs/<job>/control/inputs.json input_manifest",
+              "jobs/<job>/control/self-delete.json control",
+              "jobs/<job>/start.json control",
+              "managed-owner.json control"
+            ]
+          },
+          "volume-creation-state.json": "dispatching",
+          "volume-deleted.json": {
+            "delete_attempts": 1,
+            "id": "testvolume",
+            "observed_absent": null,
+            "verified": true
+          },
+          "volume-receipt.json": {
+            "id": "testvolume",
+            "kind": "volume"
+          },
+          "watchdog.json": {
+            "reason": "terminal status and absence",
+            "state": "pod_deleted"
+          }
+        }
+      }
+    ],
+    "outcome": "success",
+    "remaining": {
+      "pods": 0,
+      "volumes": 0
+    },
+    "requests": {
+      "DELETE /network-volumes/<id>": 1,
+      "POST /network-volumes": 1,
+      "POST /pods": 1
+    }
+  },
+  "success_stopped_by_watchdog": {
+    "contradictions": [],
+    "exit_code": 0,
+    "last_lines": [
+      "Job ledger: <ledger>",
+      "Pod testpod: deleted; its absence was verified.",
+      "Volume testvolume: deleted; its absence was verified. Nothing from this job remains."
+    ],
+    "ledgers": [
+      {
+        "files": [
+          "control.lock",
+          "controller-heartbeat.json",
+          "downloads/artifact-manifest.json",
+          "downloads/artifacts/metrics.json",
+          "downloads/artifacts/model.bin",
+          "downloads/artifacts/result.json",
+          "downloads/artifacts/train.log",
+          "downloads/backup-verified.json",
+          "downloads/collect.lock",
+          "downloads/volume-audit-*/00000001.bin",
+          "downloads/volume-audit-*/00000002.bin",
+          "downloads/volume-audit-*/00000007.bin",
+          "downloads/volume-audit-*/00000008.bin",
+          "downloads/volume-audit-*/00000009.bin",
+          "downloads/volume-audit-*/objects.json",
+          "events.jsonl",
+          "events.lock",
+          "job.json",
+          "pod-cleanup-attempt.json",
+          "pod-creation-state.json",
+          "pod-deleted.json",
+          "pod-dispatch.json",
+          "pod-intent.json",
+          "pod-receipt.json",
+          "recovery-handoff.json",
+          "recovery.lock",
+          "stop-request.json",
+          "summary.json",
+          "training-released.json",
+          "volume-audit.json",
+          "volume-creation-state.json",
+          "volume-deleted.json",
+          "volume-dispatch.json",
+          "volume-intent.json",
+          "volume-receipt.json",
+          "watchdog.json",
+          "watchdog.lock",
+          "watchdog.log"
+        ],
+        "states": {
+          "downloads/artifact-manifest.json": [
+            "artifacts/metrics.json",
+            "artifacts/model.bin",
+            "artifacts/result.json",
+            "artifacts/train.log"
+          ],
+          "downloads/artifacts/result.json": {
+            "outcome": "success"
+          },
+          "downloads/backup-verified.json": {
+            "file_count": 4
+          },
+          "job.json": {
+            "config_keys": [
+              "agent_stale_seconds",
+              "cloud",
+              "command",
+              "controller_stale_seconds",
+              "data_center_id",
+              "disk_gb",
+              "finalize_grace_seconds",
+              "gpu_count",
+              "gpu_id",
+              "image",
+              "inputs",
+              "max_compute_usd",
+              "max_compute_usd_per_hour",
+              "max_runtime_seconds",
+              "min_cuda_version",
+              "poll_seconds",
+              "preparation_timeout_seconds",
+              "required_artifacts",
+              "self_termination_grace_seconds",
+              "self_termination_probe",
+              "startup_timeout_seconds",
+              "volume_gb",
+              "volume_type",
+              "workload_env"
+            ],
+            "inputs": ["data/table.csv"],
+            "keys": [
+              "auth_fingerprint_salt",
+              "auth_key_fingerprint",
+              "config",
+              "created_utc",
+              "deadline_epoch",
+              "input_manifest",
+              "inputs",
+              "job_id",
+              "ledger_schema",
+              "pod_name",
+              "preparation_deadline_epoch",
+              "prior_pod_ids",
+              "prior_volume_ids",
+              "quote",
+              "runner_version",
+              "startup_deadline_epoch",
+              "volume_name"
+            ]
+          },
+          "pod-cleanup-attempt.json": {
+            "outcome": "accepted",
+            "phase": "startup_visibility_guard",
+            "verified": false
+          },
+          "pod-creation-state.json": "dispatching",
+          "pod-deleted.json": {
+            "delete_attempts": 0,
+            "id": "testpod",
+            "observed_absent": null,
+            "verified": true
+          },
+          "pod-receipt.json": {
+            "id": "testpod",
+            "kind": "pod"
+          },
+          "recovery-handoff.json": {
+            "state": "complete"
+          },
+          "stop-request.json": "recover/finish cleanup",
+          "summary.json": {
+            "keys": [
+              "completed_utc",
+              "download_directory",
+              "job_id",
+              "pod_evidence",
+              "pod_termination_verified",
+              "self_termination_probe",
+              "training_outcome",
+              "volume_deletion_verified",
+              "volume_evidence"
+            ],
+            "pod_termination_verified": true,
+            "training_outcome": "success",
+            "volume_deletion_verified": true
+          },
+          "volume-audit.json": {
+            "mode": "verified_backup",
+            "objects": [
+              "inputs/data/table.csv input",
+              "jobs/<job>/agent.json control",
+              "jobs/<job>/artifact-manifest.json control",
+              "jobs/<job>/artifacts/metrics.json artifact",
+              "jobs/<job>/artifacts/model.bin artifact",
+              "jobs/<job>/artifacts/result.json artifact",
+              "jobs/<job>/artifacts/train.log artifact",
+              "jobs/<job>/control/inputs.json input_manifest",
+              "jobs/<job>/start.json control",
+              "managed-owner.json control"
+            ]
+          },
+          "volume-creation-state.json": "dispatching",
+          "volume-deleted.json": {
+            "delete_attempts": 1,
+            "id": "testvolume",
+            "observed_absent": null,
+            "verified": true
+          },
+          "volume-receipt.json": {
+            "id": "testvolume",
+            "kind": "volume"
+          },
+          "watchdog.json": {
+            "reason": "job finished",
+            "state": "pod_deleted"
+          }
+        }
+      }
+    ],
+    "outcome": "success",
+    "remaining": {
+      "pods": 0,
+      "volumes": 0
+    },
+    "requests": {
+      "DELETE /network-volumes/<id>": 1,
+      "DELETE /pods/<id>": 1,
+      "POST /network-volumes": 1,
+      "POST /pods": 1
+    }
+  },
+  "unreleased_pod": {
+    "contradictions": [],
+    "exit_code": 2,
+    "last_lines": [
+      "Job ledger: <ledger>",
+      "Pod testpod: deleted; its absence was verified.",
+      "Volume testvolume: deleted; its absence was verified. Nothing from this job remains."
+    ],
+    "ledgers": [
+      {
+        "files": [
+          "control.lock",
+          "controller-heartbeat.json",
+          "downloads/collect.lock",
+          "downloads/volume-audit-*/00000001.bin",
+          "downloads/volume-audit-*/00000002.bin",
+          "downloads/volume-audit-*/00000003.bin",
+          "downloads/volume-audit-*/00000004.bin",
+          "downloads/volume-audit-*/00000005.bin",
+          "downloads/volume-audit-*/objects.json",
+          "events.jsonl",
+          "events.lock",
+          "job.json",
+          "pod-creation-state.json",
+          "pod-deleted.json",
+          "pod-dispatch.json",
+          "pod-intent.json",
+          "pod-receipt.json",
+          "recovery-checkpoint.json",
+          "recovery-handoff.json",
+          "recovery.lock",
+          "stop-request.json",
+          "summary.json",
+          "terminal-observed.json",
+          "volume-audit.json",
+          "volume-creation-state.json",
+          "volume-deleted.json",
+          "volume-dispatch.json",
+          "volume-intent.json",
+          "volume-receipt.json",
+          "watchdog.json",
+          "watchdog.lock",
+          "watchdog.log"
+        ],
+        "states": {
+          "job.json": {
+            "config_keys": [
+              "agent_stale_seconds",
+              "cloud",
+              "command",
+              "controller_stale_seconds",
+              "data_center_id",
+              "disk_gb",
+              "finalize_grace_seconds",
+              "gpu_count",
+              "gpu_id",
+              "image",
+              "inputs",
+              "max_compute_usd",
+              "max_compute_usd_per_hour",
+              "max_runtime_seconds",
+              "min_cuda_version",
+              "poll_seconds",
+              "preparation_timeout_seconds",
+              "required_artifacts",
+              "self_termination_grace_seconds",
+              "self_termination_probe",
+              "startup_timeout_seconds",
+              "volume_gb",
+              "volume_type",
+              "workload_env"
+            ],
+            "inputs": ["data/table.csv"],
+            "keys": [
+              "auth_fingerprint_salt",
+              "auth_key_fingerprint",
+              "config",
+              "created_utc",
+              "deadline_epoch",
+              "input_manifest",
+              "inputs",
+              "job_id",
+              "ledger_schema",
+              "pod_name",
+              "preparation_deadline_epoch",
+              "prior_pod_ids",
+              "prior_volume_ids",
+              "quote",
+              "runner_version",
+              "startup_deadline_epoch",
+              "volume_name"
+            ]
+          },
+          "pod-creation-state.json": "dispatching",
+          "pod-deleted.json": {
+            "delete_attempts": 0,
+            "id": "testpod",
+            "observed_absent": null,
+            "verified": true
+          },
+          "pod-receipt.json": {
+            "id": "testpod",
+            "kind": "pod"
+          },
+          "recovery-checkpoint.json": {
+            "files": [
+              "downloads/volume-audit-*/objects.json",
+              "job.json",
+              "pod-receipt.json",
+              "volume-audit.json",
+              "volume-receipt.json"
+            ],
+            "pod_id": "testpod",
+            "training_outcome": "not_started",
+            "version": 1,
+            "volume_id": "testvolume"
+          },
+          "recovery-handoff.json": {
+            "state": "complete"
+          },
+          "stop-request.json": "recover/finish cleanup",
+          "summary.json": {
+            "backup_not_required": true,
+            "keys": [
+              "backup_not_required",
+              "completed_utc",
+              "guard_records",
+              "job_id",
+              "pod_created",
+              "pod_evidence",
+              "pod_termination_verified",
+              "self_termination_probe",
+              "training_outcome",
+              "volume_deletion_verified",
+              "volume_evidence"
+            ],
+            "pod_created": true,
+            "pod_termination_verified": true,
+            "training_outcome": "not_started",
+            "volume_deletion_verified": true
+          },
+          "terminal-observed.json": {
+            "ownership_checked": false,
+            "source": "accepted_self_delete"
+          },
+          "volume-audit.json": {
+            "mode": "unreleased_pod",
+            "objects": [
+              "inputs/data/table.csv input",
+              "jobs/<job>/agent.json control",
+              "jobs/<job>/control/guard-failure.json control",
+              "jobs/<job>/control/inputs.json input_manifest",
+              "jobs/<job>/control/self-delete.json control",
+              "managed-owner.json control"
+            ]
+          },
+          "volume-creation-state.json": "dispatching",
+          "volume-deleted.json": {
+            "delete_attempts": 1,
+            "id": "testvolume",
+            "observed_absent": null,
+            "verified": true
+          },
+          "volume-receipt.json": {
+            "id": "testvolume",
+            "kind": "volume"
+          },
+          "watchdog.json": {
+            "reason": "terminal status and absence",
+            "state": "pod_deleted"
+          }
+        }
+      }
+    ],
+    "outcome": "workload_failed",
+    "remaining": {
+      "pods": 0,
+      "volumes": 0
+    },
+    "requests": {
+      "DELETE /network-volumes/<id>": 1,
+      "POST /network-volumes": 1,
+      "POST /pods": 1
+    }
+  },
+  "workload_failed": {
+    "contradictions": [],
+    "exit_code": 2,
+    "last_lines": [
+      "Job ledger: <ledger>",
+      "Pod testpod: deleted; its absence was verified.",
+      "Volume testvolume: deleted; its absence was verified. Nothing from this job remains."
+    ],
+    "ledgers": [
+      {
+        "files": [
+          "control.lock",
+          "controller-heartbeat.json",
+          "downloads/artifact-manifest.json",
+          "downloads/artifacts/model.bin",
+          "downloads/artifacts/result.json",
+          "downloads/artifacts/train.log",
+          "downloads/backup-verified.json",
+          "downloads/collect.lock",
+          "downloads/volume-audit-*/00000001.bin",
+          "downloads/volume-audit-*/00000002.bin",
+          "downloads/volume-audit-*/00000006.bin",
+          "downloads/volume-audit-*/00000007.bin",
+          "downloads/volume-audit-*/00000008.bin",
+          "downloads/volume-audit-*/00000009.bin",
+          "downloads/volume-audit-*/objects.json",
+          "events.jsonl",
+          "events.lock",
+          "job.json",
+          "pod-creation-state.json",
+          "pod-deleted.json",
+          "pod-dispatch.json",
+          "pod-intent.json",
+          "pod-receipt.json",
+          "recovery-handoff.json",
+          "recovery.lock",
+          "stop-request.json",
+          "summary.json",
+          "terminal-observed.json",
+          "training-released.json",
+          "volume-audit.json",
+          "volume-creation-state.json",
+          "volume-deleted.json",
+          "volume-dispatch.json",
+          "volume-intent.json",
+          "volume-receipt.json",
+          "watchdog.json",
+          "watchdog.lock",
+          "watchdog.log"
+        ],
+        "states": {
+          "downloads/artifact-manifest.json": [
+            "artifacts/model.bin",
+            "artifacts/result.json",
+            "artifacts/train.log"
+          ],
+          "downloads/artifacts/result.json": {
+            "outcome": "training_failed"
+          },
+          "downloads/backup-verified.json": {
+            "file_count": 3
+          },
+          "job.json": {
+            "config_keys": [
+              "agent_stale_seconds",
+              "cloud",
+              "command",
+              "controller_stale_seconds",
+              "data_center_id",
+              "disk_gb",
+              "finalize_grace_seconds",
+              "gpu_count",
+              "gpu_id",
+              "image",
+              "inputs",
+              "max_compute_usd",
+              "max_compute_usd_per_hour",
+              "max_runtime_seconds",
+              "min_cuda_version",
+              "poll_seconds",
+              "preparation_timeout_seconds",
+              "required_artifacts",
+              "self_termination_grace_seconds",
+              "self_termination_probe",
+              "startup_timeout_seconds",
+              "volume_gb",
+              "volume_type",
+              "workload_env"
+            ],
+            "inputs": ["data/table.csv"],
+            "keys": [
+              "auth_fingerprint_salt",
+              "auth_key_fingerprint",
+              "config",
+              "created_utc",
+              "deadline_epoch",
+              "input_manifest",
+              "inputs",
+              "job_id",
+              "ledger_schema",
+              "pod_name",
+              "preparation_deadline_epoch",
+              "prior_pod_ids",
+              "prior_volume_ids",
+              "quote",
+              "runner_version",
+              "startup_deadline_epoch",
+              "volume_name"
+            ]
+          },
+          "pod-creation-state.json": "dispatching",
+          "pod-deleted.json": {
+            "delete_attempts": 0,
+            "id": "testpod",
+            "observed_absent": null,
+            "verified": true
+          },
+          "pod-receipt.json": {
+            "id": "testpod",
+            "kind": "pod"
+          },
+          "recovery-handoff.json": {
+            "state": "complete"
+          },
+          "stop-request.json": "recover/finish cleanup",
+          "summary.json": {
+            "keys": [
+              "completed_utc",
+              "download_directory",
+              "job_id",
+              "pod_evidence",
+              "pod_termination_verified",
+              "self_termination_probe",
+              "training_outcome",
+              "volume_deletion_verified",
+              "volume_evidence"
+            ],
+            "pod_termination_verified": true,
+            "training_outcome": "training_failed",
+            "volume_deletion_verified": true
+          },
+          "terminal-observed.json": {
+            "ownership_checked": false,
+            "source": "accepted_self_delete"
+          },
+          "volume-audit.json": {
+            "mode": "verified_backup",
+            "objects": [
+              "inputs/data/table.csv input",
+              "jobs/<job>/agent.json control",
+              "jobs/<job>/artifact-manifest.json control",
+              "jobs/<job>/artifacts/model.bin artifact",
+              "jobs/<job>/artifacts/result.json artifact",
+              "jobs/<job>/artifacts/train.log artifact",
+              "jobs/<job>/control/inputs.json input_manifest",
+              "jobs/<job>/control/self-delete.json control",
+              "jobs/<job>/start.json control",
+              "managed-owner.json control"
+            ]
+          },
+          "volume-creation-state.json": "dispatching",
+          "volume-deleted.json": {
+            "delete_attempts": 1,
+            "id": "testvolume",
+            "observed_absent": null,
+            "verified": true
+          },
+          "volume-receipt.json": {
+            "id": "testvolume",
+            "kind": "volume"
+          },
+          "watchdog.json": {
+            "reason": "terminal status and absence",
+            "state": "pod_deleted"
+          }
+        }
+      }
+    ],
+    "outcome": "workload_failed",
+    "remaining": {
+      "pods": 0,
+      "volumes": 0
+    },
+    "requests": {
+      "DELETE /network-volumes/<id>": 1,
+      "POST /network-volumes": 1,
+      "POST /pods": 1
+    }
+  }
+}

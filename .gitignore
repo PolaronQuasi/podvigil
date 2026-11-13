@@ -1,0 +1,38 @@
+# Credentials and machine-specific settings.
+.env
+.env.*
+!.env.example
+.runner
+*.pem
+*.key
+/jobs/*.local.json
+
+# Python environments, caches and packaging output.
+__pycache__/
+*.py[cod]
+.venv/
+.venv-ci/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+*.egg-info/
+build/
+dist/
+node_modules/
+
+# Job ledgers, downloaded results and generated reports remain local.
+/downloads/
+/output/
+*.log
+
+# Editor and operating-system files.
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp

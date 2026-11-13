@@ -1,0 +1,32 @@
+---
+title: Results survive compute termination
+---
+sequenceDiagram
+  accTitle: PodVigil result delivery
+  accDescr: The supervisor stops workload writers and snapshots outputs to persistent storage. Pod deletion and verified absence come before S3 retrieval. Only a verified local backup and whole-volume audit authorize deletion of the owned volume. Incomplete recovery retains storage and reports ongoing billing risk.
+
+  participant POD as Pod supervisor
+  participant VOL as Owned volume
+  participant API as Runpod API
+  participant CTRL as Controller or watchdog
+  participant BACK as Local backup
+
+  POD->>POD: Stop workload writers
+  POD->>VOL: Snapshot outputs and manifest
+  POD->>API: Attempt own-Pod DELETE
+  CTRL->>API: Verify compute absence
+  Note over API,CTRL: Accepted DELETE alone is not proof
+
+  CTRL->>VOL: Retrieve bytes through S3
+  VOL-->>BACK: Save artifacts and control records
+  CTRL->>BACK: Verify sizes and SHA-256
+  CTRL->>VOL: Audit the whole volume
+
+  alt All objects covered and unchanged
+    CTRL->>API: Delete owned volume
+    CTRL->>API: Verify volume absence
+    CTRL-->>BACK: Record complete backup and cleanup
+  else Missing, changed or unknown objects
+    CTRL-->>BACK: Preserve available outputs and recovery evidence
+    Note over VOL,BACK: Volume retained, storage may still bill
+  end

@@ -1,0 +1,43 @@
+---
+title: Owned compute, independent supervision, durable results
+---
+flowchart LR
+  accTitle: PodVigil architecture
+  accDescr: A local controller and detached watchdog share a job ledger. They manage an owned Runpod Secure Cloud Pod through the provider API. Inside the Pod a privileged guard supervises an unprivileged workload and snapshots local outputs to a private network volume. A local backup is verified before that volume can be deleted.
+
+  subgraph LOCAL["YOUR COMPUTER"]
+    direction TB
+    CLI["podvigil command<br/>Plan, launch, inspect, recover"] --> CTRL["Controller<br/>Policy and ownership checks"]
+    CTRL --> WATCH["Detached watchdog<br/>Independent deadline and recovery"]
+    CTRL -.-> LEDGER[("Job ledger<br/>Ownership and cleanup evidence")]
+    WATCH -.-> LEDGER
+  end
+
+  API["Runpod API<br/>Explicit Secure Cloud requests"]
+
+  subgraph POD["OWNED SECURE CLOUD POD"]
+    direction TB
+    GUARD["Privileged guard and supervisor<br/>Deadline, snapshot and self-deletion"]
+    WORK["Unprivileged workload<br/>No account or S3 credentials"]
+    DISK[("Local Pod outputs")]
+    GUARD --> WORK --> DISK
+  end
+
+  subgraph RESULTS["RESULT RECOVERY"]
+    direction TB
+    VOLUME[("Owned network volume<br/>Survives Pod termination")]
+    VOLUME -->|"S3 retrieval after compute is gone"| BACKUP[("Verified local backup<br/>Artifacts and checksums")]
+    BACKUP --> AUDIT["Audit all volume objects<br/>Then delete owned storage"]
+  end
+
+  LOCAL -->|"create, verify, delete"| API
+  API --> POD
+  POD -->|"supervisor snapshot"| RESULTS
+
+  classDef primary fill:#eaf2ff,stroke:#3864a2,color:#142b49,stroke-width:2px;
+  classDef store fill:#e7f5ef,stroke:#35745d,color:#163c2f,stroke-width:1.5px;
+  classDef external fill:#f1ecfa,stroke:#7d60ad,color:#382650,stroke-width:2px;
+
+  class CLI,CTRL,WATCH,GUARD,WORK,AUDIT primary;
+  class LEDGER,BACKUP,DISK,VOLUME store;
+  class API external;

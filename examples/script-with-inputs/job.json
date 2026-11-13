@@ -1,0 +1,21 @@
+{
+  "image": "runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404",
+  "gpu_id": "NVIDIA GeForce RTX 4090",
+  "data_center_id": "EU-RO-1",
+  "gpu_count": 1,
+  "min_cuda_version": "12.8",
+  "max_compute_usd_per_hour": 1.0,
+  "max_compute_usd": 0.3,
+  "disk_gb": 30,
+  "volume_gb": 10,
+  "max_runtime_seconds": 900,
+  "startup_timeout_seconds": 300,
+  "finalize_grace_seconds": 120,
+  "inputs": [
+    { "local": "train.py", "remote": "train.py" },
+    { "directory": "data", "remote": "data" },
+    { "pattern": "configs/*.json" }
+  ],
+  "command": ["python3", "-u", "-m", "train"],
+  "required_artifacts": ["metrics.json"]
+}
