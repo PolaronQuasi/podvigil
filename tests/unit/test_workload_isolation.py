@@ -70,7 +70,8 @@ class IsolationPortableTests(unittest.TestCase):
 
 
 @unittest.skipUnless(
-    sys.platform.startswith("linux"), "Actual Linux ownership and processes required"
+    sys.platform.startswith("linux") and os.geteuid() == 0,
+    "Linux root is required for real ownership and process isolation",
 )
 class IsolationLinuxUnitTests(unittest.TestCase):
     def setUp(self):

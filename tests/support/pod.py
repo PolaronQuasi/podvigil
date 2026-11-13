@@ -101,6 +101,7 @@ class Container:
         pids=64,
         fake_source=None,
         init=False,
+        memory="128m",
     ):
         self.temp = tempfile.TemporaryDirectory(prefix="pod-linux-review-")
         self.base = Path(self.temp.name)
@@ -161,7 +162,7 @@ Api.get_or_none = observed_get
             "--cpus",
             "1",
             "--memory",
-            "128m",
+            memory,
             "--pids-limit",
             str(pids),
             *(["--init"] if init else []),
@@ -193,7 +194,18 @@ Api.get_or_none = observed_get
     def finish(self, timeout=25, expected_code=0, expect_deleted=True):
         self.output = self.process.communicate(timeout=timeout)[0]
         if self.process.returncode != expected_code:
-            raise AssertionError(self.output)
+            state = subprocess.run(
+                ["docker", "inspect", "--format", "{{json .State}}", self.name],
+                capture_output=True,
+                text=True,
+                timeout=10,
+            )
+            raise AssertionError(
+                f"Container exited {self.process.returncode}; expected {expected_code}.\n"
+                + (state.stdout or state.stderr)
+                + "\n"
+                + self.output
+            )
         if expect_deleted and not (self.workspace / "deleted").exists():
             raise AssertionError("No verified fake deletion: " + self.output)
         return self.output

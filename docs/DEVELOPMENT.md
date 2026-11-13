@@ -69,10 +69,20 @@ CI checks Python formatting. The full local `--check` also covers text files and
 
 ## Test lanes
 
+GitHub runs CI for pull requests, pushes to `main`, and manual dispatches. Feature branches use the
+pull-request checks, avoiding duplicate push and pull-request results for the required check.
+
 `tools/ci.py test` runs all automatically collected tests. `--lane unit`, `--lane fakecloud`,
 `--lane integration` and `--lane container` select a lane. Windows process tests need the project's
 `.venv` and locked dependencies. Report skips; a Linux run does not replace the Windows process
 checks.
+
+GitHub's Windows lane uses the runner's full temporary-directory path. The CLI fixtures preserve
+`PSModulePath` so PowerShell can find its CIM process-launch modules within the normal watchdog
+startup deadline. The path tests still reject unsafe artifact aliases.
+
+Windows record reads briefly retry sharing violations while another process atomically replaces the
+JSON file. Persistent denial still raises an error; it never becomes a missing-record default.
 
 For container checks, select an already-installed Python Linux image:
 
@@ -87,8 +97,17 @@ and under Docker's injected init. Only allowlisted tracked files enter the conta
 credentials or Docker socket are mounted. GitHub prepares the digest-pinned image before starting
 these tests.
 
-The golden-ledger test pins observable states. The operations-page test checks literal states and
-messages against [OPERATIONS.md](OPERATIONS.md); review messages assembled from pieces manually too.
+On Linux, the host process running `--lane container` needs root privileges to inspect and clean up
+the guard's private, root-owned fixture outputs. The GitHub container job uses `sudo` for that
+harness command. The six real ownership and process-isolation unit tests also require Linux root;
+ordinary-user test lanes report them as skipped, and both clean Linux root suites execute them.
+
+The 256 MiB checkpoint-cache fixture has a 512 MiB memory limit to accommodate its file pages and
+Python processes. Other fixtures, including the deliberate worker-OOM regression, retain 128 MiB.
+
+The golden-ledger test pins lifecycle records and validates optional beacon diagnostics separately.
+The operations-page test checks literal states and messages against [OPERATIONS.md](OPERATIONS.md);
+review messages assembled from pieces manually too.
 
 ## Package checks
 
