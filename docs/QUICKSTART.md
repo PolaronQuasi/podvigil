@@ -9,8 +9,10 @@ a 10 GB network volume.
 
 ## What you need
 
-- A computer with Windows or Linux, Python 3.10 or newer, and git. Real jobs have so far been
-  launched from Windows only; on Linux the test suite passes. macOS may work but is untested.
+- A computer with Windows, Linux or macOS, Python 3.10 or newer, and git. Real jobs have so far been
+  launched from Windows only. CI covers fake services and local processes on Linux and macOS; check
+  the intended commit's
+  [results](https://github.com/PolaronQuasi/podvigil/actions/workflows/ci.yml).
 - A Runpod account with some credit.
 - A Runpod API key. Create it in the Runpod console under your account settings.
   [SECURITY.md](../SECURITY.md#the-runpod-api-key) lists the permissions the runner uses.

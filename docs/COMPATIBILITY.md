@@ -4,10 +4,18 @@ The project version is **0.1.0**, defined once in `src/podvigil/__init__.py` and
 `podvigil --version`. Package metadata reads that same value.
 
 Python 3.10 or later is required. The GitHub workflow declares Linux checks on Python 3.10, 3.12 and
-3.14, and Windows checks on Python 3.12. The container checks use a pinned Python 3.13.7 image. A
-declared matrix is not a claim that hosted CI has already run. Check the
+3.14, Windows checks on Python 3.12, and macOS 26 checks on Python 3.12 for Apple Silicon and Intel.
+Both macOS architectures also install and test the wheel built by the distribution job. The
+container checks use a pinned Python 3.13.7 image. A declared matrix is not a claim that hosted CI
+has already run. Check the
 [CI results](https://github.com/PolaronQuasi/podvigil/actions/workflows/ci.yml) for the intended
 commit.
+
+macOS controller and package checks use fake services and local processes; no real Runpod launch
+from macOS is claimed. For `run-local`, macOS cleanup covers ordinary process-group children.
+Children that deliberately start a different session are not covered by that cleanup; Windows job
+objects and Linux's subreaper provide stronger descendant tracking. This limitation concerns local
+workload rehearsal, not the Linux Pod guard used by cloud jobs.
 
 ## Commands and configuration
 

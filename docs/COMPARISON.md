@@ -28,8 +28,8 @@ before you rely on them.
 - **No server and no open port.** Nothing runs in the cloud except your Pod; the Pod has no SSH, no
   Jupyter and no ports.
 - **Hash-checked results**, with a receipt tied to the job and the volume.
-- **A native Windows controller.** Linux passes the test suite too, but has not launched a real job
-  yet.
+- **A native controller.** CI covers Windows, Linux and macOS (Apple Silicon and Intel). Real cloud
+  launches have been observed from Windows only.
 - **Rules a coding agent cannot talk its way around:** Secure Cloud only, no repeated ambiguous
   create, no deletion of anything the job did not create.
 

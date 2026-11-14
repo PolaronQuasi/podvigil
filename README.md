@@ -36,7 +36,7 @@ JSON document on standard output; the lines for people go to standard error.
 ## Who it is for
 
 - **For** people and coding agents who want one unattended batch job on a GPU: "run this for at most
-  N hours, give me the files, leave nothing billing", from a Windows or Linux computer.
+  N hours, give me the files, leave nothing billing", from a Windows, Linux or macOS computer.
 - **Not for** interactive work (there is no SSH or Jupyter), serving, jobs across several machines,
   or finding the lowest price.
 - **Not a spending cap.** The deadline is enforced by this tool, not by Runpod. If Runpod's API is

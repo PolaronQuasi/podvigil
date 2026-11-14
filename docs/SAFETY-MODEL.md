@@ -169,7 +169,7 @@ Where it can tell, it then stops on the safe side: it keeps storage and reports.
 | The three example jobs exactly as written | not yet run on Runpod |
 | A key with only the permissions in [SECURITY.md](../SECURITY.md) | not yet tested |
 | Linux as the controller's system for a real job | not yet observed (the local suite passes on Linux) |
-| macOS as the controller's system | not tested |
+| macOS as the controller's system | Apple Silicon and Intel CI cover fake services, local processes and installed wheels; no real cloud launch observed. See the intended commit's [CI results](https://github.com/PolaronQuasi/podvigil/actions/workflows/ci.yml). |
 
 ## Fixed rules
 

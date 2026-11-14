@@ -33,10 +33,11 @@ python -m venv .venv-ci
 .\.venv-ci\Scripts\python.exe tools/check_workflows.py
 ```
 
-On Linux use `python3` and `.venv/bin/python` / `.venv-ci/bin/python`. Tests import this checkout's
-`src/`, use dummy credentials and temporary state, and never load the manual live lane. Logs,
-counts, skips and source hashes go under ignored `output/ci/`. A new run replaces that lane's local
-record, so copy it first when needed. Generated validation logs stay out of published documentation.
+On Linux or macOS use `python3` and `.venv/bin/python` / `.venv-ci/bin/python`. Tests import this
+checkout's `src/`, use dummy credentials and temporary state, and never load the manual live lane.
+Logs, counts, skips and source hashes go under ignored `output/ci/`. A new run replaces that lane's
+local record, so copy it first when needed. Generated validation logs stay out of published
+documentation.
 
 `python -m tests.run_validation --output-dir output/validation` also records a validation report
 with the Git commit, checkout dirtiness and hashes of source, tests, examples, documentation,
@@ -54,7 +55,7 @@ npm ci --ignore-scripts
 .\.venv-ci\Scripts\python.exe tools/format_files.py --check
 ```
 
-Use `--write` to apply formatting or `--check` to report differences. On Linux, use
+Use `--write` to apply formatting or `--check` to report differences. On Linux or macOS, use
 `.venv-ci/bin/python` for the same commands. The formatter reads only Git-tracked files, so stage
 newly added files first.
 
@@ -76,6 +77,19 @@ pull-request checks, avoiding duplicate push and pull-request results for the re
 `--lane integration` and `--lane container` select a lane. Windows process tests need the project's
 `.venv` and locked dependencies. Report skips; a Linux run does not replace the Windows process
 checks.
+
+GitHub also runs the full portable suite on macOS 26, on Apple Silicon (`macos-26`) and Intel
+(`macos-26-intel`), with Python 3.12 and locked dependencies. These jobs set `TMPDIR` to the
+runner's temporary directory. Windows-only, Linux subreaper and Linux container checks retain their
+explicit platform skips; the Linux jobs still exercise the Pod runtime. macOS process tests check
+ordinary process-group cleanup and the detached watchdog. They do not claim Linux subreaper behavior
+for local workloads that deliberately start a new session.
+
+Filesystem fixtures detect case sensitivity and support for non-UTF-8 names. They skip only those
+specific cases when the filesystem cannot represent them; the Linux lanes retain both checks.
+Descriptor-based scan-error injection uses file identity on every POSIX platform, and the local
+connection-refusal fixture releases its bound port before connecting so BSD returns a refusal. The
+workflow checker uses checksum-pinned native actionlint binaries on both Mac architectures.
 
 GitHub's Windows lane uses the runner's full temporary-directory path. The CLI fixtures preserve
 `PSModulePath` so PowerShell can find its CIM process-launch modules within the normal watchdog
@@ -124,6 +138,11 @@ and failed workloads, missing artifacts, time limits and descendant-process clea
 and credential reads are rejected; package contents and metadata must stay unchanged, and no state
 folder may be created. The build also produces an sdist; checksums accompany both artifacts.
 
+The two macOS package jobs download these same distributions, verify their SHA-256 checksums, and
+run the installed-wheel smoke test on both CPU architectures. They do not rebuild the wheel. The
+smoke workloads exercise success, failure, missing artifacts, timeouts and ordinary child cleanup;
+the Linux smoke additionally makes the child start a separate session.
+
 ## Continuous integration
 
 The GitHub workflows provide quality, platform tests, container tests, packages and a required
@@ -131,6 +150,10 @@ aggregate check. Inspect the
 [CI run](https://github.com/PolaronQuasi/podvigil/actions/workflows/ci.yml) for the intended commit
 before claiming that hosted CI passed. If automatic CI was skipped, run the CI workflow manually on
 that branch from the Actions tab.
+
+Both macOS test and package matrices are required by `All checks passed`. The release workflow calls
+the same verification workflow, so creating a release draft also requires those jobs. Adding a
+platform does not create a release, change the version, or enable automatic publication.
 
 The separate Gitea workflow retains six jobs: lint, filenames-only secret scan, Linux tests (Python
 3.10 with and without dependencies, and 3.12), network-disabled container tests with and without
