@@ -266,6 +266,17 @@ class TroubleshootingPageTests(unittest.TestCase):
         self.assertIn("Waiting interrupted; the job is unaffected.", self.page)
         self.assertIn("watchdog is no longer heard", self.page)
 
+    def test_capacity_rounds_and_refusals_are_documented(self):
+        for text in (
+            "--wait-for-capacity",
+            "capacity_rounds",
+            "attempt_ledgers",
+            "Capacity retry refused",
+            "Capacity waiting allowance expired.",
+            "last attempt's ledger does not verify absence",
+        ):
+            self.assertIn(text, self.flat)
+
     def test_every_message_the_code_raises_or_prints_is_on_the_page(self):
         self.check("messages", messages(), lambda literal: literal in self.flat)
 

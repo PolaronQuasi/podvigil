@@ -115,6 +115,11 @@ For a detached job, `podvigil wait JOB [--timeout MINUTES]` waits using only its
 returns the foreground launch's exit code. `JOB` accepts a ledger folder, `latest`, or an ID prefix.
 Timeout and Ctrl+C stop the waiting command; the job is unaffected. See [wait](docs/MANUAL.md#wait).
 
+Use `podvigil launch --wait-for-capacity 15 job.json` to allow additional capacity rounds within 15
+minutes of starting the command. Additional attempts require a definite no-capacity answer, verified
+absence and fresh catalog capacity. It also works with `--detach`; see
+[launch](docs/MANUAL.md#launch).
+
 ## The two closing lines
 
 A successful run ends like this, on standard error:

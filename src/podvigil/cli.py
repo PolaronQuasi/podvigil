@@ -10,6 +10,7 @@ import math
 import sys
 
 from . import NAME, __version__, events, settings
+from .controller.capacity import CapacityWaitInterrupted, launch_with_capacity_wait
 from .controller.launch import definite_no_capacity, launch_candidates, plan_job
 from .controller.ledger import find_job, status_read
 from .controller.operator_commands import (
@@ -111,6 +112,13 @@ def build_parser():
         p = commands.add_parser(name, parents=[common])
         p.add_argument("config")
         if name == "launch":
+            p.add_argument(
+                "--wait-for-capacity",
+                type=minutes,
+                metavar="MINUTES",
+                help="after proven no capacity and cleanup, poll the catalog for up to MINUTES "
+                "before another attempt; waits in the foreground even with --detach",
+            )
             p.add_argument(
                 "--detach",
                 action="store_true",
@@ -308,11 +316,20 @@ def main(argv=None, context=None):
         result = resolve_creation(folder, args.pod_id, volume_id=args.volume_id, audit=args.audit)
     else:
         context["configs"] = configs = read_job(args.config)
-        result = (
-            plan_job(configs)
-            if args.action == "plan"
-            else launch_candidates(configs, ledgers, detach=args.detach)
-        )
+        if args.action == "plan":
+            result = plan_job(configs)
+        elif args.wait_for_capacity is None:
+            result = launch_candidates(configs, ledgers, detach=args.detach)
+        else:
+            context["capacity"] = {}
+            result = launch_with_capacity_wait(
+                configs,
+                ledgers,
+                args.wait_for_capacity,
+                detach=args.detach,
+                details=context["capacity"],
+                progress=say,
+            )
 
     context["result"], context["text"] = result, text
 
@@ -321,8 +338,13 @@ def document(context, outcome, code, error):
     """The JSON for standard output: the command's result with its outcome, or, on failure, the outcome, the
     error and what the job's ledger shows."""
     if error is None and isinstance(context.get("result"), dict):
-        return {**context["result"], "outcome": outcome, "exit_code": code}
-    record = {"outcome": outcome, "exit_code": code, "error": error}
+        return {
+            **context["result"],
+            **context.get("capacity", {}),
+            "outcome": outcome,
+            "exit_code": code,
+        }
+    record = {**context.get("capacity", {}), "outcome": outcome, "exit_code": code, "error": error}
     if context["ledgers"]:
         folder = context["ledgers"][-1]
         job = status_read(folder / "job.json", {})
@@ -359,15 +381,19 @@ def run_cli(argv=None, program=None):
         outcome = context.get("outcome") or of_result(
             context["action"], context["result"] or {}, context["configs"]
         )
-    except KeyboardInterrupt:
+    except KeyboardInterrupt as exc:
         if context["action"] == "wait":
             say("Waiting interrupted; the job is unaffected.")
             if context["ledgers"]:
                 context["result"] = status(context["ledgers"][-1])
         else:
             error = (
-                "Interrupted; cleanup requested. Check the job ledger "
-                "before assuming billing has ended."
+                str(exc)
+                if isinstance(exc, CapacityWaitInterrupted)
+                else (
+                    "Interrupted; cleanup requested. Check the job ledger "
+                    "before assuming billing has ended."
+                )
             )
             say(error)
         outcome = "interrupted"
@@ -379,7 +405,7 @@ def run_cli(argv=None, program=None):
         # Avoid reflecting third-party SDK tracebacks which may contain credentials.
         error = public_message(exc)
         say("RUN FAILED: " + error)
-        outcome = of_failure(
+        outcome = context.get("capacity", {}).get("outcome") or of_failure(
             context["action"],
             exc,
             context["ledgers"][-1] if context["ledgers"] else None,

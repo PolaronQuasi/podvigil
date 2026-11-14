@@ -120,6 +120,8 @@ class OutcomeTableTests(unittest.TestCase):
         # The usage error code is no longer shared with workload_failed.
         self.assertNotIn(2, [outcomes.EXIT_CODES["usage_error"]])
         self.assertEqual(outcomes.EXIT_CODES["wait_timeout"], 14)
+        # Opting into capacity rounds keeps the established outcomes and their codes.
+        self.assertEqual(outcomes.EXIT_CODES["no_capacity"], 4)
         self.assertEqual(sorted(outcomes.EXIT_CODES.values()), [*range(15), 64, 130])
 
     def test_a_workload_stopped_by_cancel(self):
