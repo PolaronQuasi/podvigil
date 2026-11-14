@@ -433,6 +433,9 @@
   stroke: url(#my-svg-gradient);
   filter: drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));
 }
+#my-svg .edgeLabel rect {
+  opacity: 1 !important;
+}
 #my-svg :root {
   --mermaid-font-family: 'trebuchet ms', verdana, arial, sans-serif;
 }

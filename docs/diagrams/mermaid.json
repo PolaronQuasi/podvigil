@@ -4,6 +4,7 @@
   "deterministicIds": true,
   "deterministicIDSeed": "podvigil",
   "htmlLabels": false,
+  "themeCSS": ".edgeLabel rect { opacity: 1 !important; }",
   "themeVariables": {
     "fontFamily": "Arial, Helvetica, sans-serif",
     "fontSize": "18px",
