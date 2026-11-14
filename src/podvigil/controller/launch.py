@@ -14,6 +14,7 @@ from .. import LEDGER_SCHEMA, __version__, events
 from ..credentials import load_key
 from ..errors import public_error, public_message
 from ..jobspec import check_cuda_floor, validate
+from ..outcomes import of_failure
 from ..podrt.api import ApiError, ApiPacingDeferred
 from ..podrt.records import best_effort_save, digest, save, utc
 from ..policy import CLOUD
@@ -329,6 +330,7 @@ def launch(cfg, ledgers=None, *, detach=False):
                     "phase": phase,
                     "utc": utc(),
                     "error_type": "KeyboardInterrupt",
+                    "outcome": "interrupted",
                     "handed_to_watchdog": True,
                     "cleanup_error": None,
                 },
@@ -353,6 +355,7 @@ def launch(cfg, ledgers=None, *, detach=False):
                 "phase": phase,
                 "utc": utc(),
                 **public_error(exc, [account_key]),
+                "outcome": of_failure("launch", exc, folder, definite_no_capacity(exc)),
                 "cleanup_error": cleanup_error,
             },
         )

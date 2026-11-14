@@ -77,6 +77,11 @@ OUTCOMES = (
         "the volume was deleted; the Pod's deletion is verified",
     ),
     (
+        "wait_timeout",
+        14,
+        "the waiting allowance expired before the job ended; waiting stopped, the job is unaffected",
+    ),
+    (
         "usage_error",
         64,
         "the command line is wrong; the parser printed the usage on standard error",
@@ -189,4 +194,49 @@ def of_failure(action, exc, folder, no_capacity):
             resource_state(folder, job, "volume")["state"],
         ):
             return "rejected"
+    return "error"
+
+
+def of_ended_job(folder):
+    """Reconstruct a foreground launch's outcome from its ledger, without acting on the job.
+
+    A launch can write a recovery summary before recording its failure. That summary must not
+    turn a rejected create into workload_failed, or an interrupted launch into success.
+    """
+    failure = status_read(folder / "launch-failure.json")
+    if isinstance(failure, dict):
+        recorded = failure.get("outcome")
+        if recorded in EXIT_CODES:
+            return recorded
+        if failure.get("error_type") == "KeyboardInterrupt":
+            return "interrupted"
+        # Older ledgers predate the stored outcome. Use the same resource precedence and
+        # the structured provider evidence; message matching alone never proves rejection.
+        from .provider.catalog import CAPACITY_DETAIL
+        from .status import resource_state
+
+        job = status_read(folder / "job.json", {})
+        pod = resource_state(folder, job, "pod")
+        no_capacity = failure.get("error_type") == "NoCapacity" or (
+            failure.get("error_type") == "ApiError"
+            and failure.get("method") == "POST"
+            and failure.get("path") == "/pods"
+            and pod["state"] == "rejected"
+            and (
+                failure.get("http_status") == 403
+                or (
+                    failure.get("http_status") == 400
+                    and CAPACITY_DETAIL.search(str(failure.get("message", "")))
+                )
+            )
+        )
+        return of_failure("launch", RuntimeError(), folder, no_capacity)
+    left = remains(folder)
+    if left is not None:
+        return left
+    summary = status_read(folder / "summary.json")
+    job = status_read(folder / "job.json", {})
+    if isinstance(summary, dict) and summary.get("training_outcome"):
+        return of_result("launch", summary, [job.get("config") or {}])
+    # A handoff marked complete without a summary proves no workload result.
     return "error"

@@ -6,6 +6,7 @@
 from pathlib import Path
 import argparse
 import json
+import math
 import sys
 
 from . import NAME, __version__, events, settings
@@ -31,6 +32,7 @@ from .outcomes import EXIT_CODES, MEANINGS, of_failure, of_result
 from .provider.catalog import survey, survey_lines
 from .provider.client import configured_api
 from .status import NOTHING_CREATED, job_list, list_lines, resource_state, state_lines, status
+from .waiting import wait_for_job
 
 # The codes by name are for callers that used them before the table in outcomes.OUTCOMES.
 EXIT_WORKLOAD_FAILED = EXIT_CODES["workload_failed"]
@@ -67,6 +69,17 @@ class VersionAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         print(NAME + " " + __version__)
         parser.exit()
+
+
+def minutes(value):
+    """A finite, nonnegative allowance; fractions of a minute are supported."""
+    try:
+        number = float(value)
+    except ValueError:
+        number = -1
+    if not math.isfinite(number) or number < 0 or not math.isfinite(number * 60):
+        raise argparse.ArgumentTypeError("MINUTES must be a finite, nonnegative number.")
+    return number
 
 
 def build_parser():
@@ -113,9 +126,17 @@ def build_parser():
         "reattach",
         "resume-monitoring",
         "status",
+        "wait",
     ):
         p = commands.add_parser(name, parents=[common])
         p.add_argument("job_directory", metavar="JOB", help=JOB_HELP)
+        if name == "wait":
+            p.add_argument(
+                "--timeout",
+                type=minutes,
+                metavar="MINUTES",
+                help="stop waiting after MINUTES; default: no limit; the job is unaffected",
+            )
         if name == "recover":
             p.add_argument(
                 "--accept-partial",
@@ -247,6 +268,8 @@ def main(argv=None, context=None):
         watchdog(folder)
     elif args.action == "status":
         result = status(folder)
+    elif args.action == "wait":
+        result, context["outcome"] = wait_for_job(folder, args.timeout, progress=say)
     elif args.action == "list":
         rows = job_list()
         # The folder by its real location, as every ledger line prints it (settings.real_path).
@@ -333,13 +356,20 @@ def run_cli(argv=None, program=None):
     error = None
     try:
         main(argv, context)
-        outcome = of_result(context["action"], context["result"] or {}, context["configs"])
-    except KeyboardInterrupt:
-        error = (
-            "Interrupted; cleanup requested. Check the job ledger "
-            "before assuming billing has ended."
+        outcome = context.get("outcome") or of_result(
+            context["action"], context["result"] or {}, context["configs"]
         )
-        say(error)
+    except KeyboardInterrupt:
+        if context["action"] == "wait":
+            say("Waiting interrupted; the job is unaffected.")
+            if context["ledgers"]:
+                context["result"] = status(context["ledgers"][-1])
+        else:
+            error = (
+                "Interrupted; cleanup requested. Check the job ledger "
+                "before assuming billing has ended."
+            )
+            say(error)
         outcome = "interrupted"
     except SystemExit as exc:
         if context["action"] is not None or exc.code in (0, None):

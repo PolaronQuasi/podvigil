@@ -119,6 +119,8 @@ class OutcomeTableTests(unittest.TestCase):
         self.assertEqual(run.EXIT_NO_CAPACITY, 4)
         # The usage error code is no longer shared with workload_failed.
         self.assertNotIn(2, [outcomes.EXIT_CODES["usage_error"]])
+        self.assertEqual(outcomes.EXIT_CODES["wait_timeout"], 14)
+        self.assertEqual(sorted(outcomes.EXIT_CODES.values()), [*range(15), 64, 130])
 
     def test_a_workload_stopped_by_cancel(self):
         # F2: The Pod stops the workload and publishes the "cancelled" outcome.
@@ -175,6 +177,9 @@ class StreamTests(unittest.TestCase):
             (result["pod"]["state"], result["volume"]["state"]), ("rejected", "deleted")
         )
         self.assertTrue(err[-3].startswith("RUN FAILED: Runpod POST /pods: HTTP 400"))
+        self.assertEqual(outcomes.of_ended_job(cloud.folder()), result["outcome"])
+        failure = json.loads((cloud.folder() / "launch-failure.json").read_text())
+        self.assertEqual(failure["outcome"], result["outcome"])
 
     def test_a_refusal_for_another_reason_is_rejected(self):
         cloud = Cloud(self.root)

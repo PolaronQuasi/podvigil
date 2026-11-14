@@ -256,6 +256,16 @@ class TroubleshootingPageTests(unittest.TestCase):
     def test_every_state_the_code_writes_is_on_the_page(self):
         self.check("states", states(), lambda value: value in self.page)
 
+    def test_wait_outcome_and_terminal_phases_are_documented(self):
+        from podvigil.outcomes import EXIT_CODES
+        from podvigil.status import TERMINAL_PHASES
+
+        self.assertIn(f"`wait_timeout` ({EXIT_CODES['wait_timeout']})", self.page)
+        for phase in TERMINAL_PHASES:
+            self.assertIn("`" + phase + "`", self.page)
+        self.assertIn("Waiting interrupted; the job is unaffected.", self.page)
+        self.assertIn("watchdog is no longer heard", self.page)
+
     def test_every_message_the_code_raises_or_prints_is_on_the_page(self):
         self.check("messages", messages(), lambda literal: literal in self.flat)
 
