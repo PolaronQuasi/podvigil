@@ -29,3 +29,13 @@ Pod ownership recognizes `PODVIGIL_JOB_ID`, `PODWARDEN_JOB_ID` and `WONDOMON_JOB
 receive `PODVIGIL_OUTPUT_DIR` and `PODVIGIL_INPUT_DIR`, with the corresponding older prefixes as
 aliases. Private supervisor settings never reach the workload. Existing ledger paths and stored
 configurations remain readable.
+
+`wait` resolves the same existing ledger paths, `latest` and ID prefixes as `status`. It does not
+migrate or rewrite old ledgers. New launch-failure records store an outcome; older records are
+classified from their recorded errors and resource evidence. Status adds `ended` and
+`recovery_handoff`; existing fields remain available. The new `wait_timeout` outcome uses code 14;
+existing codes keep their meanings.
+
+Capacity retries are opt-in through `launch --wait-for-capacity MINUTES`; existing launch commands
+keep their behavior. The option adds `capacity_rounds` and `attempt_ledgers` to the result without
+changing the job-file format or version. It also works with `--detach`.

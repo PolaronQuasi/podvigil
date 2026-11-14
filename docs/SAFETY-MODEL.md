@@ -13,8 +13,9 @@ API and storage. "Observed" means seen on Runpod itself; so far that is a handfu
 
 **Secure Cloud only.** The job file must say Secure Cloud (or leave the default). The Pod request
 carries `cloud: "SECURE"`, the returned Pod is checked, and the guard checks again inside the Pod. A
-missing Secure Cloud capacity ends the launch; there is no Community Cloud fallback. This rule is
-also structural: the network volumes the runner needs exist only in Secure Cloud.
+missing Secure Cloud capacity ends the round; optional capacity waiting remains Secure Cloud only.
+There is no Community Cloud fallback. This rule is also structural: the network volumes the runner
+needs exist only in Secure Cloud.
 
 **One deadline, three guards.** The deadline is fixed once, from Runpod's clock, just before the Pod
 is requested, and never extended. The Pod guard stops the workload in time to copy its outputs and
@@ -22,6 +23,18 @@ deletes its own Pod by the deadline; the watchdog and the controller on your com
 at the deadline if it still exists. Each of the three can end the Pod without the others. After
 `launch --detach`, or when the controller dies, the other two remain. See
 [concepts](CONCEPTS.md#the-three-guards).
+
+**Read-only waiting.** `wait` reads the existing ledger, including the shared status phases and
+watchdog heartbeat. It does not supervise, cancel or recover the job. Timeout and Ctrl+C stop the
+reader only. A stale watchdog stops waiting and reports what the ledger says remains; it is not
+proof that the watchdog process or billing ended.
+
+**Proven-empty capacity retries.** With `--wait-for-capacity`, another round requires the existing
+definite-no-capacity classification and proof that no Pod was created and no volume remains. The
+last candidate must pass that check too. Catalog-only polling avoids repeated allocations and
+uploads while no capacity is advertised. Each actual attempt keeps its ledger, rechecks limits, and
+gets a deadline from its own start. Missing evidence, ambiguous creates and other errors stop the
+command.
 
 **Only its own resources.** The runner deletes a Pod or a volume only when the job's ledger records
 that this job created it: from Runpod's answer to the create request, or found later by the job's
@@ -113,8 +126,9 @@ copy at the end runs out of time, the volume is kept with partial files. See
 [the workload contract](WORKLOAD-CONTRACT.md#the-cost-of-the-local-disk-design).
 
 **Capacity is never promised.** A launch often ends with "no capacity", even when the catalog said
-"LOW" a moment earlier. The runner tries the next candidate only after a definite no-capacity
-answer.
+"LOW" a moment earlier. The runner tries the next candidate only after a definite no-capacity answer
+and verified absence. Optional capacity rounds do not reserve a GPU. A positive catalog read can
+still be followed by a refusal after a volume was created and inputs uploaded.
 
 **The container is trusted.** The workload's isolation is ordinary Linux user separation inside the
 container image you choose. It is not a virtual machine. The image, the Linux kernel and Runpod are
@@ -134,6 +148,8 @@ Where it can tell, it then stops on the safe side: it keeps storage and reports.
 | Check | Status |
 | --- | --- |
 | Lifecycle, ownership, deletion evidence, volume audit, candidate fallback, failure paths | tested locally against fakes of Runpod's API and S3, on Windows and Linux |
+| `wait`: local-only reads, foreground outcomes, terminal phases, stale watchdog, timeout and Ctrl+C | tested locally with simulated ledger transitions; no live job run for this feature |
+| Bounded capacity rounds: catalog-only polling, verified cleanup, fresh price and budget checks, refusal to repeat ambiguous creates | tested locally against fake catalog, API and S3 responses; no live job run for this feature |
 | The detached Windows watchdog surviving a killed controller | tested locally on Windows |
 | The Pod guard, as process 1 and under an injected init, with the workload as another user | tested locally in network-less Linux containers |
 | A volume that ignores `chmod` and refuses `chown` | tested locally with a model of the real volume |

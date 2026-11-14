@@ -32,6 +32,14 @@ result is JSON on stdout; progress and the two closing resource status lines go 
 separate from installed source. The ledger schema is an internal file format, not a second product
 version.
 
+`wait` is a local ledger reader. Its timeout and interruption do not alter the job. The terminal
+status and job outcome are distinct from proof that no resources remain.
+
+`launch --wait-for-capacity` adds rounds only after definite no capacity and verified absence.
+Between attempts it uses read-only catalog checks with existing API pacing. Each real attempt keeps
+its own ledger and rechecks price and limits. Its runtime deadline starts at its own Pod request;
+waiting never authorizes an ambiguous create to be repeated.
+
 ## Trust boundary
 
 The user's machine, container image, operating-system kernel and provider remain trusted. Workload

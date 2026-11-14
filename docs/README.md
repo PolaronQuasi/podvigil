@@ -8,8 +8,8 @@ guides describe the current implementation.
 | --- | --- |
 | [Quickstart](QUICKSTART.md) | Installation, credentials and a first supervised job |
 | [Examples](EXAMPLES.md) | Runnable job files and offline plans |
-| [Manual](MANUAL.md) | Commands, options, results and exit codes |
-| [Concepts](CONCEPTS.md) | Ledgers, watchdogs, ownership and deadlines |
+| [Manual](MANUAL.md) | Commands, read-only waiting, capacity rounds, results and exit codes |
+| [Concepts](CONCEPTS.md) | Ledgers, watchdogs, ownership, waiting and deadlines |
 | [Job file](JOB-FILE.md) | Input declarations, GPU candidates and limits |
 | [Workload contract](WORKLOAD-CONTRACT.md) | Environment, files and shutdown behavior |
 | [Operations](OPERATIONS.md) | State messages, retained resources and recovery |

@@ -52,10 +52,10 @@ random 32-character hexadecimal name. The state folder is `%LOCALAPPDATA%\podvig
 choose another one (see [the command line reference](MANUAL.md#where-the-runner-keeps-things)).
 
 The ledger is the runner's memory, and its authority. The runner deletes a Pod or a volume only when
-this job's ledger records that this job created it. Every job command (`status`, `logs`, `recover`,
-and the others) takes the ledger folder as its argument, or `latest`, or the start of the job ID;
-`podvigil list` shows the jobs in the state folder. Keep ledgers until you no longer need the
-results; the runner never deletes them.
+this job's ledger records that this job created it. Every job command (`status`, `wait`, `logs`,
+`recover`, and the others) takes the ledger folder as its argument, or `latest`, or the start of the
+job ID; `podvigil list` shows the jobs in the state folder. Keep ledgers until you no longer need
+the results; the runner never deletes them.
 
 Main files:
 
@@ -73,7 +73,8 @@ Main files:
 | `pod-deleted.json`, `volume-deleted.json` | after a verified deletion | the evidence (see below) |
 | `downloads/` | during recovery | the results, the manifest and the receipt |
 | `summary.json` | at the very end | the outcome and both verified deletions |
-| `launch-failure.json` | when `launch` fails | the phase, the error type, a redacted message, the HTTP status |
+| `recovery-handoff.json` | when watchdog recovery ends | completion or retained storage requiring attention |
+| `launch-failure.json` | when `launch` fails | the phase, error type, redacted message, HTTP status and, for new attempts, foreground launch outcome |
 | `watchdog.json`, `watchdog.log` | while the watchdog runs | its state, and one line per event |
 | `events.jsonl` | by every process that acts on the job | one JSON line per event, redacted: the job's story |
 
@@ -111,9 +112,24 @@ Three separate processes can end the job, so that no single failure leaves a Pod
   there. It registers as the reaper of its own descendants instead and collects every process the
   workload leaves behind.
 
+## Waiting for an existing job
+
+`wait` is a reader, not another guard. It uses `status`'s terminal phases and returns that status
+document with the foreground launch's outcome. It reads no credentials, makes no cloud calls, and
+writes nothing. A failed launch returns immediately even if its cleanup still needs attention. The
+recorded resource states remain authoritative about what may bill.
+
+Waiting also stops if a nonterminal job's watchdog is no longer heard, on an optional timeout, or on
+Ctrl+C. These events do not cancel the job or trigger recovery. See [the manual](MANUAL.md) for the
+five-second polling interval, timeout outcome and script example.
+
 ## The deadline
 
 There is one deadline per job, fixed once and never extended.
+
+The optional capacity-waiting allowance applies before another attempt starts. It does not become
+the next job's runtime or startup deadline. Every actual attempt has a new preparation allowance;
+its compute deadline is fixed just before its own Pod request.
 
 - It is set just before the Pod is requested, from Runpod's clock (the `Date` header of its API
   answers), not your computer's clock.
@@ -172,9 +188,8 @@ The runner deletes a job's volume on one of four grounds, each after a verified 
    object that the outputs' link index names is never read and keeps the volume. The outcome is
    `partial_outputs`. No automatic path takes this step: only the command with the option does.
 
-Grounds 3 and 4 are new in this version. They are tested locally against fakes of Runpod's API and
-S3, and have not yet run on Runpod itself. See
-[the safety model](SAFETY-MODEL.md#what-has-been-checked-and-how).
+Grounds 3 and 4 are tested locally against fakes of Runpod's API and S3, and have not yet run on
+Runpod itself. See [the safety model](SAFETY-MODEL.md#what-has-been-checked-and-how).
 
 ## Stopping a job early
 
@@ -219,10 +234,17 @@ unique name and job ID, and later in Runpod's audit log. Until it finds one, or 
 ## Launch candidates
 
 A job file can list up to eight GPU and data-center pairs. `launch` tries them in order. It moves on
-only after a definite "no capacity" answer, and only after the failed attempt's ledger shows that no
-Pod exists and that its volume deletion was verified. Each attempt is its own job, with its own
-ledger and watchdog. Any other error stops the launch. See
+only after a definite "no capacity" answer, and only after the failed attempt's ledger proves that
+no Pod was created and no volume remains. Each attempt is its own job, with its own ledger and
+watchdog. Any other error stops the launch. See
 [the job file reference](JOB-FILE.md#launch-candidates).
+
+`launch --wait-for-capacity MINUTES` adds bounded rounds. After the whole round reports definite no
+capacity, the final attempt must also prove no Pod was created and no volume remains. The command
+then pauses and polls the catalog, without allocating storage or uploading inputs. Only candidates
+reporting capacity are attempted again, with fresh price and budget checks and a new ledger. An
+ambiguous create is never repeated. Without the option, there is still just one round. The JSON
+result names the number of rounds and every created attempt ledger.
 
 ## The pacing file
 

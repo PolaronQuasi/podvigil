@@ -3,13 +3,14 @@ title: Results survive compute termination
 ---
 sequenceDiagram
   accTitle: PodVigil result delivery
-  accDescr: The supervisor stops workload writers and snapshots outputs to persistent storage. Pod deletion and verified absence come before S3 retrieval. Only a verified local backup and whole-volume audit authorize deletion of the owned volume. Incomplete recovery retains storage and reports ongoing billing risk.
+  accDescr: The supervisor stops workload writers and snapshots outputs to persistent storage. Pod deletion and verified absence come before S3 retrieval. Only a verified local backup and whole-volume audit authorize deletion of the owned volume. Incomplete recovery retains storage and reports ongoing billing risk. Terminal records go to the local ledger. The wait command observes that ledger without doing recovery or making cloud calls.
 
   participant POD as Pod supervisor
   participant VOL as Owned volume
   participant API as Runpod API
   participant CTRL as Controller or watchdog
   participant BACK as Local backup
+  participant LEDGER as Job ledger
 
   POD->>POD: Stop workload writers
   POD->>VOL: Snapshot outputs and manifest
@@ -25,8 +26,11 @@ sequenceDiagram
   alt All objects covered and unchanged
     CTRL->>API: Delete owned volume
     CTRL->>API: Verify volume absence
-    CTRL-->>BACK: Record complete backup and cleanup
+    CTRL-->>LEDGER: Summary: workload outcome and verified cleanup
   else Missing, changed or unknown objects
     CTRL-->>BACK: Preserve available outputs and recovery evidence
+    CTRL-->>LEDGER: Launch failure or watchdog recovery handoff
     Note over VOL,BACK: Volume retained, storage may still bill
   end
+
+  Note over CTRL,LEDGER: wait reads terminal status from the ledger.<br/>It performs no API, S3 or cleanup actions.

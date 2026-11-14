@@ -166,6 +166,11 @@ For later jobs, `podvigil launch --detach <job file>` returns as soon as the wor
 leaves the rest to the watchdog (exit code 9); the computer must still stay on. It does not work
 with the self-termination probe, which this example uses.
 
+After a detached launch, `podvigil wait <returned ledger> --timeout 30` waits for the final job
+outcome using only its local ledger. It returns the foreground launch's exit code, or `wait_timeout`
+(14) when 30 minutes pass. Ctrl+C stops this reader, not the job. A stale watchdog also ends waiting
+and reports the recorded resources. See [the manual](MANUAL.md).
+
 When `launch` is done it prints the job's summary as JSON, with `"outcome": "success"` and
 `"exit_code": 0`, and then the two closing lines:
 
@@ -187,6 +192,13 @@ ending with `Trying the next candidate.`. If none had capacity, the run ends wit
 `RUN FAILED: None of the 3 candidates had capacity. Last answer: ...` and exit code 4
 (`no_capacity`), and nothing is left in your account. Wait a little, run `survey` again, adjust the
 candidates, and launch again.
+
+To make that wait part of the command, add `--wait-for-capacity 15` to `launch`. It runs the initial
+round normally, then polls the catalog between additional rounds for up to 15 minutes. It starts
+another real attempt only after a definite no-capacity answer, verified absence, and fresh catalog
+capacity. Ambiguous creates and other failures stop the command. The result includes
+`capacity_rounds` and `attempt_ledgers`; the successful job still gets its own full runtime limit.
+The option also works with `--detach`, with capacity waiting in the foreground.
 
 Keep the computer on and online until `launch` returns. If it sleeps, read
 [what happens then](SAFETY-MODEL.md#what-the-runner-cannot-make-sure-of).

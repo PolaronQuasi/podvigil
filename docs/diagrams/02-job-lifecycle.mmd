@@ -1,20 +1,30 @@
 ---
-title: One job from validation to verified cleanup
+title: Placement rounds, one job, verified cleanup
 ---
 flowchart LR
   accTitle: PodVigil job lifecycle
-  accDescr: Validate the job before spending. Arm the watchdog, create owned storage and upload inputs, then create a single Secure Cloud Pod and verify its identity. Job completion, failure, cancellation or the runtime deadline starts finalization and compute cleanup. Retrieve results after compute absence is proven. Delete storage only after verified complete backup; otherwise retain it and report billing uncertainty.
+  accDescr: Validate each attempt before spending. Optional additional capacity rounds require a definite no-capacity answer and proof that no Pod was created and no volume remains. Between rounds, poll the catalog without creating storage or uploading inputs. Each real attempt keeps a separate ledger. Arm the watchdog, create owned storage and upload inputs, then create one Secure Cloud Pod and verify its identity. Its runtime starts at its own Pod request. Finalize and stop compute before retrieving results. Delete storage only after verified complete backup; otherwise retain it and report billing uncertainty.
 
   subgraph PREPARE["PREPARE"]
     direction TB
-    PLAN["Validate job, limits and live placement"] --> PREP["Arm watchdog<br/>Create volume and upload inputs"]
+    PLAN["Validate job, limits and live placement"] --> PREP["New attempt ledger and watchdog<br/>Create volume and upload inputs"]
     PREP --> CREATE["Create one Pod<br/>Reconcile an ambiguous response"]
     CREATE --> VERIFY["Verify ownership, image, price and inputs"]
   end
 
+  subgraph CAPACITY["OPTIONAL CAPACITY ROUNDS"]
+    direction TB
+    EMPTY{"No Pod created<br/>and no volume remains?"}
+    EMPTY -->|"yes"| AGAIN{"Waiting enabled<br/>and allowance remains?"}
+    EMPTY -->|"not proven"| STOP["End command<br/>Report outcome and resources"]
+    AGAIN -->|"no"| STOP
+    AGAIN -->|"yes"| POLL["Pause; catalog reads only<br/>Recheck price and budget"]
+    POLL -->|"no capacity"| AGAIN
+  end
+
   subgraph EXECUTE["RUN AND STOP COMPUTE"]
     direction TB
-    RUN["Release workload"]
+    RUN["Release workload<br/>Deadline fixed at this Pod request"]
     RUN --> END["Success, failure, cancellation<br/>or runtime deadline"]
     END --> SNAP["Stop writers and snapshot outputs<br/>Bounded finalization"]
     SNAP --> DELETE["Attempt Pod termination<br/>Even if finalization fails"]
@@ -32,12 +42,14 @@ flowchart LR
   end
 
   PREPARE --> EXECUTE
+  PREPARE -->|"whole round: definite no capacity"| CAPACITY
+  CAPACITY -->|"candidate reports capacity"| PREPARE
   EXECUTE -->|"only after compute absence is verified"| RECOVERY
 
   classDef primary fill:#eaf2ff,stroke:#3864a2,color:#142b49,stroke-width:2px;
   classDef store fill:#e7f5ef,stroke:#35745d,color:#163c2f,stroke-width:1.5px;
   classDef caution fill:#fff5dc,stroke:#b58a25,color:#483a18,stroke-width:2px;
 
-  class PLAN,PREP,CREATE,VERIFY,RUN,END,SNAP,DELETE,RECOVER,STORAGE primary;
+  class PLAN,PREP,CREATE,VERIFY,POLL,RUN,END,SNAP,DELETE,RECOVER,STORAGE primary;
   class DONE store;
-  class UNKNOWN,KEEP caution;
+  class UNKNOWN,KEEP,STOP caution;

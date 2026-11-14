@@ -30,8 +30,8 @@ before you rely on them.
 - **Hash-checked results**, with a receipt tied to the job and the volume.
 - **A native Windows controller.** Linux passes the test suite too, but has not launched a real job
   yet.
-- **Rules a coding agent cannot talk its way around:** Secure Cloud only, no repeated creation, no
-  deletion of anything the job did not create.
+- **Rules a coding agent cannot talk its way around:** Secure Cloud only, no repeated ambiguous
+  create, no deletion of anything the job did not create.
 
 ## Where it is really worse
 
@@ -40,7 +40,9 @@ before you rely on them.
 - **Little visibility while a job runs.** `status`, `logs` and `cost` show the phase, the deadline,
   the watchdog's log and an estimated cost; the workload's own log arrives only with the results.
 - **Your computer must stay on** until the job ends.
-- **Every attempt starts fresh:** a new volume and a full upload, also after a "no capacity".
+- **Every real attempt starts fresh:** a new volume and a full upload. Optional capacity waiting
+  uses catalog-only polls between attempts; another attempt requires fresh capacity and proof that
+  the previous one left nothing. It does not reuse an earlier volume or upload.
 - **The stop is enforced by the client**, not by Runpod.
 - **Outputs reach storage only at the end**, so a Pod that dies hard loses them.
 - **Young.** The first real jobs ran on 12 November 2026; long jobs are not yet proven.
