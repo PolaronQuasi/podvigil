@@ -111,6 +111,10 @@ The [quickstart](docs/QUICKSTART.md) explains each step. In short:
    logs and the estimated compute cost; `podvigil list` shows all jobs, and `podvigil cancel latest`
    stops a running job early, giving its Pod a bounded time to save the outputs first.
 
+For a detached job, `podvigil wait JOB [--timeout MINUTES]` waits using only its local ledger and
+returns the foreground launch's exit code. `JOB` accepts a ledger folder, `latest`, or an ID prefix.
+Timeout and Ctrl+C stop the waiting command; the job is unaffected. See [wait](docs/MANUAL.md#wait).
+
 ## The two closing lines
 
 A successful run ends like this, on standard error:

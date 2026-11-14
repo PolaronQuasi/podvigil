@@ -43,6 +43,7 @@ the command prints `Job <id>: <folder>` on standard error first.
 | [`launch`](#launch) | creates, then deletes | API key and S3 keys | not applicable |
 | [`list`](#list) | no | no | yes |
 | [`status`](#status) | no | no | yes |
+| [`wait`](#wait) | no | no | yes |
 | [`logs`](#logs) | no | no | yes |
 | [`cost`](#cost) | no | no | yes |
 | [`cancel`](#cancel) | through the watchdog: asks a running Pod to finish, then deletes the job's Pod and, when verified, its volume | no; the watchdog it may start does | it stops the job |
@@ -235,7 +236,8 @@ lock, keeps no file open, and changes nothing, so it is safe while the job runs.
 <!-- prettier-ignore -->
 | Field | Meaning |
 | --- | --- |
-| `phase` | `preparing`, `starting`, `running`, `stopping`, `pod creation unresolved`, `recovering results`, `finished` or `failed` (see [troubleshooting](OPERATIONS.md#status-phases)) |
+| `phase` | `preparing`, `starting`, `running`, `stopping`, `pod creation unresolved`, `recovering results`, `finished`, `failed` or `recovery failed` (see [troubleshooting](OPERATIONS.md#status-phases)) |
+| `ended` | whether the phase is terminal; the workload may have failed and resources may still need attention |
 | `detached` | `true` when `launch --detach` handed the job to the watchdog |
 | `pod`, `volume` | `{"state": ..., "id": ...}`; the state is `not_created`, `rejected`, `unknown`, `exists` or `deleted` |
 | `deadline_utc`, `seconds_to_deadline` | the job's deadline and the seconds left |
@@ -245,6 +247,7 @@ lock, keeps no file open, and changes nothing, so it is safe while the job runs.
 | `estimated_compute_cost` | the quoted price times the time from the Pod's creation until its verified deletion, or until now; no storage, no taxes |
 | `training_outcome` | the workload's outcome, from `summary.json` once the job is finished |
 | `failure` | from `launch-failure.json`: phase, error type, redacted message, HTTP status |
+| `recovery_handoff` | the watchdog's recovery state and public failure details, when recorded |
 | `watchdog` | the watchdog's last state, process ID, message and heartbeat age |
 | `watchdog_credentials` | whether the watchdog found the same credentials as the controller |
 
@@ -254,6 +257,51 @@ that the Pod "runs and bills", give the deadline, and point to `cancel` and `sta
 give the time by which the watchdog deletes it. Otherwise, without a recent sign of the watchdog or
 once a stop was requested, they say that the Pod "may still exist and bill" and suggest `recover`;
 on a job that is still running, `recover` stops it at once.
+
+## wait
+
+```text
+podvigil wait JOB [--timeout MINUTES]
+```
+
+Waits for the job and prints the same status document as `status`, with the waiting command's
+`outcome` and `exit_code`. JOB accepts the same ledger folder, `latest`, or ID prefix. It reads only
+local ledger files: no credentials, API requests, locks, events or other writes.
+
+After `launch --detach` returns code 9, use the returned ledger with `wait` to obtain the exit code
+of a foreground launch. For example, in a shell without `set -e`:
+
+```bash
+podvigil launch --detach job.json > launch.json
+code=$?
+if [ "$code" -eq 9 ]; then
+  podvigil wait "$(python -c 'import json; print(json.load(open("launch.json"))["ledger"])')"
+  exit $?
+fi
+exit "$code"
+```
+
+The shared status phases decide when to return. A dictionary in `summary.json` or
+`launch-failure.json` is terminal; a valid `recovery-handoff.json` with state `complete` or
+`storage_retained` is also terminal. Merely finding a handoff filename is insufficient. A deleted
+Pod alone means `recovering results`: waiting continues while its watchdog is heard.
+
+A failed launch returns immediately. Its stored failure outcome takes precedence over a summary
+written by cleanup. Older failure records are classified from their recorded error and resource
+evidence. A completed handoff without a workload summary cannot establish success. Read the resource
+states even when `ended` is true: a failed job can leave resources billed.
+
+The default has no waiting limit. `--timeout` accepts finite, nonnegative minutes, including
+fractions; zero checks once. Expiry returns `wait_timeout` (14), leaving the job unaffected.
+Completion observed at the deadline wins over timeout. If a nonterminal job's watchdog is not armed
+with a heartbeat from the last five minutes, waiting stops immediately: the outcome reports the
+existing ambiguous creation, unverified compute cleanup or retained storage, or `error` when none
+applies. This is not proof that the watchdog process died; inspect `status` and `logs`.
+
+Polling is every five seconds, shortened for the remaining timeout. Standard error gets one
+`Job phase: <phase>.` line initially and whenever the phase changes, followed by the usual resource
+lines on return. Ctrl+C returns `interrupted` (130) and says
+`Waiting interrupted; the job is unaffected.` It does not cancel, stop or recover the job.
 
 ## logs
 
@@ -547,6 +595,7 @@ standard output carries both, as `outcome` and `exit_code`. A name means the sam
 | 11 | `pending` | `cancel`: the stop request is written; the Pod's deletion is not verified yet, or the watchdog still recovers the results |
 | 12 | `outputs_lost` | the workload ran, but it never published its outputs and they are lost with the Pod; the Pod and the volume are deleted, the Pod's records kept (`launch`, `recover`, `reattach`, `cancel`) |
 | 13 | `partial_outputs` | `recover --accept-partial`: the workload's outputs were incomplete; every object on the volume was copied to the ledger with its bytes checked, then the volume was deleted; the Pod's deletion is verified |
+| 14 | `wait_timeout` | the waiting allowance expired before the job ended; waiting stopped, the job is unaffected |
 | 64 | `usage_error` | the command line is wrong; the usage is printed on standard error |
 | 130 | `interrupted` | interrupted with Ctrl+C; check the job before assuming billing has ended |
 

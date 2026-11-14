@@ -109,6 +109,11 @@ Every command ends with a named outcome and exit code;
   read the copies in `copy_directory` (the summary names it); `objects.json` there maps each key to
   its file
 
+- **`wait_timeout` (14)**
+
+  the waiting allowance expired; the job is unaffected. Read the status document and closing lines,
+  or run `wait` again with a longer timeout
+
 - **`usage_error` (64)**
 
   fix the command line
@@ -149,6 +154,17 @@ they say so and change nothing:
 An ID needs at least four characters; shorter text is taken as a folder path.
 
 ## Read-only views
+
+`podvigil wait JOB [--timeout MINUTES]` reads the same ledger as `status`. It prints
+`Job phase: <phase>.` only when the phase changes, including its initial observation.
+
+- `Wait timed out; the job is unaffected.`: outcome `wait_timeout`; run `wait` again if needed.
+- `Waiting interrupted; the job is unaffected.`: Ctrl+C stopped this reader only, with code 130.
+- `Stopped waiting: the job has not ended and its watchdog is no longer heard. The job is unaffected; the closing lines show what its ledger says exists.`:
+  inspect `watchdog`, `pod` and `volume` in the returned status. This means no recent armed
+  heartbeat, not verified process death. Resolve the reported resources; waiting does not restart a
+  watchdog or stop a Pod.
+- `MINUTES must be a finite, nonnegative number.`: fix the timeout; fractions and zero are allowed.
 
 <!-- prettier-ignore -->
 | Message | Command | Meaning |
@@ -344,8 +360,13 @@ The three command forms do the same; a line from one form can be followed with a
 | `stopping` | a stop was requested and the Pod is not yet proven deleted; after a `cancel` of a running workload this includes the time the Pod is given to finish |
 | `pod creation unresolved` | the Pod create request had an ambiguous answer |
 | `recovering results` | the Pod's deletion is verified; results and the volume are being handled |
-| `finished` | `summary.json` exists; read `outcome` and the closing lines |
+| `finished` | `summary.json` contains a dictionary, or a recovery handoff records `complete`; read `training_outcome` and the closing lines; a missing summary cannot establish workload success |
 | `failed` | `launch` recorded a failure in `launch-failure.json`; read `failure` and the closing lines |
+| `recovery failed` | the watchdog's `recovery-handoff.json` records `storage_retained`; inspect the recovery error and retained resources |
+
+These three phases have `ended: true`; `wait` returns immediately. An ordinary recovery phase
+continues until a terminal record arrives or the watchdog is no longer heard. A launch failure's
+stored outcome takes precedence over its cleanup summary when `wait` chooses the exit code.
 
 `failed` describes the controller, not necessarily the resources: the watchdog may still be
 finishing the cleanup. The closing lines and `watchdog` tell you.

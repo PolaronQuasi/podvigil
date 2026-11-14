@@ -39,6 +39,7 @@ NOTHING_CREATED = [
 
 # A watchdog heard from within this time still guards the job.
 WATCHDOG_HEARD_SECONDS = 300
+TERMINAL_PHASES = frozenset({"finished", "failed", "recovery failed"})
 
 
 def watchdog_heard(folder, now=None):
@@ -208,6 +209,7 @@ def status(folder):
         status_read(folder / "summary.json"),
         status_read(folder / "launch-failure.json"),
     )
+    handoff = status_read(folder / "recovery-handoff.json")
     watch, isolation = (
         status_read(folder / "watchdog.json"),
         status_read(folder / "watchdog-isolation.json"),
@@ -217,6 +219,8 @@ def status(folder):
         phase = "finished"
     elif isinstance(failure, dict):
         phase = "failed"
+    elif isinstance(handoff, dict) and handoff.get("state") in ("complete", "storage_retained"):
+        phase = "finished" if handoff["state"] == "complete" else "recovery failed"
     elif pod["state"] == "deleted":
         phase = "recovering results"
     elif (folder / "stop-request.json").exists() and pod["state"] in ("exists", "unknown"):
@@ -249,6 +253,7 @@ def status(folder):
         "job_id": job.get("job_id"),
         "ledger": str(folder),
         "phase": phase,
+        "ended": phase in TERMINAL_PHASES,
         "detached": (folder / "detached.json").exists(),
         "gpu": cfg.get("gpu_id"),
         "gpu_count": cfg.get("gpu_count"),
@@ -258,7 +263,7 @@ def status(folder):
         "deadline_utc": epoch_utc(deadline),
         "seconds_to_deadline": (
             round(deadline - now)
-            if epoch_utc(deadline) and phase not in ("finished", "recovering results")
+            if epoch_utc(deadline) and phase not in TERMINAL_PHASES | {"recovering results"}
             else None
         ),
         "startup_deadline_utc": epoch_utc(job.get("startup_deadline_epoch")),
@@ -278,6 +283,15 @@ def status(folder):
             else None
         ),
         "watchdog": watchdog_state,
+        "recovery_handoff": (
+            {
+                key: handoff[key]
+                for key in ("state", "error_type", "message", "utc")
+                if key in handoff
+            }
+            if isinstance(handoff, dict)
+            else None
+        ),
         "watchdog_credentials": (
             isolation.get("credentials") if isinstance(isolation, dict) else None
         ),
