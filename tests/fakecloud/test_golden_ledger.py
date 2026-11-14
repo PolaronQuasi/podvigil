@@ -21,7 +21,7 @@ import time
 import unittest
 
 from podvigil.storage import Storage
-from podvigil.podrt.records import read
+from podvigil.podrt.records import read, save
 from tests.support import runner as run
 from tests.support.runner import patch_run
 from tests.support.fakes import NO_CAPACITY_DETAIL, FakeApi, FakeS3
@@ -226,6 +226,20 @@ def observe(folder):
         if not path.is_file():
             continue
         name = path.relative_to(folder).as_posix()
+        if name == "beacon-observation.json":
+            # A watchdog can observe the bucket just as the controller deletes it.
+            # Validate this optional diagnostic without pinning its timing-dependent presence.
+            value = read(path)
+            if (
+                not isinstance(value, dict)
+                or set(value) != {"state", "error_type", "utc"}
+                or value["state"] != "unknown"
+                or not all(
+                    isinstance(value[key], str) and value[key] for key in ("error_type", "utc")
+                )
+            ):
+                raise AssertionError("Invalid optional beacon diagnostic")
+            continue
         files.append(normalise(name))
         if name.endswith(".json") and not name.startswith("downloads/volume-audit-"):
             value = fields(name, read(path))
@@ -381,6 +395,22 @@ GOLDEN_FILE = Path(__file__).with_name("golden_ledger.json")
 
 class GoldenLedgerTests(unittest.TestCase):
     maxDiff = None
+
+    def test_optional_beacon_diagnostic_preserves_the_lifecycle_snapshot(self):
+        with tempfile.TemporaryDirectory(prefix="podvigil-golden-observation-") as tmp:
+            folder = Path(tmp)
+            save(folder / "summary.json", {"training_outcome": "success"})
+            expected = observe(folder)
+            observation = {
+                "state": "unknown",
+                "error_type": "NoSuchBucket",
+                "utc": "2026-01-01T00:00:00+00:00",
+            }
+            save(folder / "beacon-observation.json", observation)
+            self.assertEqual(observe(folder), expected)
+            save(folder / "beacon-observation.json", {**observation, "state": "verified"})
+            with self.assertRaisesRegex(AssertionError, "Invalid optional beacon diagnostic"):
+                observe(folder)
 
     def test_every_scenario_leaves_the_pinned_ledger(self):
         golden = json.loads(GOLDEN_FILE.read_text(encoding="utf-8"))

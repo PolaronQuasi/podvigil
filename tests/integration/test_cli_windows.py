@@ -465,6 +465,7 @@ class CLILifecycleTests(unittest.TestCase):
                     "LOCALAPPDATA",
                     "PROGRAMDATA",
                     "PROGRAMFILES",
+                    "PSMODULEPATH",  # Keep CIM module lookup; no account credentials.
                 }
                 environment = {
                     key: value for key, value in os.environ.items() if key.upper() in allowed
@@ -641,6 +642,7 @@ class CLILifecycleTests(unittest.TestCase):
                     "LOCALAPPDATA",
                     "PROGRAMDATA",
                     "PROGRAMFILES",
+                    "PSMODULEPATH",  # Keep CIM module lookup; no account credentials.
                 }
                 environment = {
                     key: value for key, value in os.environ.items() if key.upper() in allowed

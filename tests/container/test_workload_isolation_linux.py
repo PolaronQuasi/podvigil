@@ -194,7 +194,8 @@ class Api(OriginalApi):
                 "[f.write(chunk) for _ in range(64)];f.flush();os.fsync(f.fileno());f.close();time.sleep(11)"
             ),
         ]
-        container = Container(review_image(), config=job(command), fake_source=fake)
+        # Dirty checkpoint pages count toward the cgroup limit alongside all three Python processes.
+        container = Container(review_image(), config=job(command), fake_source=fake, memory="512m")
         self.addCleanup(container.close)
         container.finish(timeout=40)
         self.assertEqual(container.result()["outcome"], "success")

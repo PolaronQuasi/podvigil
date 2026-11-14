@@ -128,10 +128,17 @@ def best_effort_save(path, value):
 
 
 def read(path, default=None):
-    try:
-        return json.loads(Path(path).read_text(encoding="utf-8"))
-    except FileNotFoundError:
-        return default
+    for attempt in range(20):
+        try:
+            return json.loads(Path(path).read_text(encoding="utf-8"))
+        except FileNotFoundError:
+            return default
+        except PermissionError:
+            # An atomic replacement can briefly deny new Windows readers too.
+            # Retry locally; persistent denial must never look like a missing record.
+            if os.name != "nt" or attempt == 19:
+                raise
+            time.sleep(min(0.005 * 2**attempt, 0.05))
 
 
 def digest(path):

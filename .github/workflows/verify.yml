@@ -73,6 +73,9 @@ jobs:
         run: .venv/bin/python -B tools/ci.py test
       - name: Windows unit, fake cloud and process tests
         if: runner.os == 'Windows'
+        env:
+          TEMP: ${{ runner.temp }}
+          TMP: ${{ runner.temp }}
         run: .venv/Scripts/python.exe -B tools/ci.py test
       - name: Preserve test evidence
         if: always()
@@ -101,7 +104,12 @@ jobs:
           docker pull "$REVIEW_IMAGE"
           echo "PODVIGIL_REVIEW_DOCKER_IMAGE=$(docker image inspect --format '{{.Id}}' "$REVIEW_IMAGE")" >> "$GITHUB_ENV"
       - name: Pod lifecycle and isolation tests (containers have no network)
-        run: python -B tools/ci.py test --lane container
+        # The guard creates private, root-owned volume artifacts. Their inspecting
+        # harness needs root on Linux, including for fixture cleanup.
+        run: |
+          mkdir -p output/ci
+          sudo --preserve-env=PODVIGIL_REVIEW_DOCKER_IMAGE \
+            "$(command -v python)" -B tools/ci.py test --lane container
       - name: Clean Linux root suite, with and without init
         run: python -B tools/ci.py container-suite --image "$PODVIGIL_REVIEW_DOCKER_IMAGE"
       - name: Preserve container test evidence
