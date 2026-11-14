@@ -235,14 +235,25 @@ of preference:
   moves to the next one only on a definite "no capacity" answer: the catalog shows no capacity, or
   Runpod refuses the Pod request with HTTP 400 "no longer any instances available" (or a similar
   capacity message) or with HTTP 403. It also waits, up to 60 seconds, until the failed attempt's
-  ledger shows no Pod and a verified volume deletion.
+  ledger proves no Pod was created and no volume remains.
 - Anything else stops the launch: a timeout, a server error, HTTP 429, any other 400, a price above
   the candidate's ceiling, a data center without STANDARD volumes. An ambiguous creation is never
   repeated.
 
 A 403 is treated as "no access to this GPU pool", following Runpod's own guidance. A key without
 permission to create Pods also gets 403, so with such a key the runner tries every candidate, each
-time creating and deleting a volume, before it gives up.
+time creating and deleting a volume, before the initial round ends.
+
+`--wait-for-capacity MINUTES` is a `launch` option, not a job-file field. It adds bounded rounds
+over this list after a definite no-capacity result and verified absence. Between rounds it polls the
+catalog without creating volumes or uploading inputs, then attempts only candidates reporting
+capacity. Every actual attempt still starts with new storage, a new ledger and fresh checks. Its
+runtime is measured from its own Pod request.
+
+The existing 403 policy also applies in additional rounds. If the catalog keeps advertising
+capacity, a key without Pod-create permission can therefore cause repeated volume creation and
+cleanup until the allowance ends. Waiting cannot fix that permission error; check the key when 403
+responses persist. See [launch](MANUAL.md#launch) for outcomes and interruption behavior.
 
 ## Data centers
 
@@ -290,6 +301,9 @@ then grow.
   created: "launch --detach cannot run the self-termination probe (self_termination_probe): its
   result is known only at the end of the job. Nothing was created." Set it to `false` for a detached
   launch.
+
+`wait`'s local five-second polling and the capacity option's 75-second interval are separate from
+the job's `poll_seconds`; neither is another watchdog setting.
 
 ## Checking a job file
 

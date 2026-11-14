@@ -18,6 +18,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 
 
@@ -44,7 +45,7 @@ output = Path(os.environ['PODVIGIL_OUTPUT_DIR'])
 inputs = Path(os.environ['PODVIGIL_INPUT_DIR'])
 mode = os.environ['SMOKE_MODE']
 child = subprocess.Popen([sys.executable, '-B', '-m', 'worker'],
-                         start_new_session=os.name != 'nt',
+                         start_new_session=sys.platform.startswith('linux'),
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 deadline = time.monotonic() + 5
 while not (output / 'child.pid').is_file():
@@ -263,8 +264,14 @@ class InstalledWheelTests(unittest.TestCase):
                 self.assertFalse(self.state.exists())
                 output = Path(result["output_dir"])
                 self.assertTrue(output.is_relative_to(work))
+                # macOS stops ordinary process-group children; Linux also reaps children
+                # that start their own session. Allow the OS to finish orphan collection.
+                child = int((output / "child.pid").read_text())
+                end = time.monotonic() + 5
+                while running(child) and time.monotonic() < end:
+                    time.sleep(0.02)
                 self.assertFalse(
-                    running(int((output / "child.pid").read_text())),
+                    running(child),
                     "A local workload descendant survived completion.",
                 )
                 saved = json.loads((output / "result.json").read_text())

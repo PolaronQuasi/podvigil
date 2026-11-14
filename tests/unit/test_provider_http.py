@@ -203,14 +203,16 @@ class TransportTests(unittest.TestCase):
 
     def test_actual_loopback_connection_refusal_is_not_sent(self):
         with socket.socket() as reserved:
-            # Reserve the port without listening so no other server owns it.
+            # Ask the OS for an unused port, then release it. BSD can time out on a
+            # bound, non-listening socket instead of refusing the connection.
             reserved.bind(("127.0.0.1", 0))
-            api = Api("dummy", f"http://127.0.0.1:{reserved.getsockname()[1]}", post_timeout=5)
-            with patch("socket.create_connection", wraps=socket.create_connection) as connect:
-                with self.assertRaises(ApiError) as caught:
-                    api.request("POST", "/pods", {})
-            self.assertTrue(caught.exception.not_sent)
-            self.assertEqual(connect.call_count, 1)
+            port = reserved.getsockname()[1]
+        api = Api("dummy", f"http://127.0.0.1:{port}", post_timeout=5)
+        with patch("socket.create_connection", wraps=socket.create_connection) as connect:
+            with self.assertRaises(ApiError) as caught:
+                api.request("POST", "/pods", {})
+        self.assertTrue(caught.exception.not_sent)
+        self.assertEqual(connect.call_count, 1)
 
     def test_dns_refusal_and_certificate_fail_before_application_send(self):
         cases = [

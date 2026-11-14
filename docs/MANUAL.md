@@ -101,7 +101,8 @@ first candidate's limits apply.
   stopped. On Linux it gets up to ten seconds to finish after SIGTERM, then remaining descendants
   are killed. On Windows and Linux, remaining descendants are also stopped when the main command
   exits normally or fails, before results are recorded. This process cleanup does not sandbox the
-  workload.
+  workload. On macOS cleanup covers ordinary process-group children; a child that deliberately
+  starts a different session can escape it. Rehearse only trusted workloads with `run-local`.
 - **Result**: it writes `result.json` as the Pod would, checks `required_artifacts`, and prints a
   JSON result with the workload's outcome and exit code (`workload_outcome`, `workload_exit_code`),
   the folders, the outputs, any missing artifacts and warnings. The command's own outcome is

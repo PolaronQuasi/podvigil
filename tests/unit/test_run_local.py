@@ -55,6 +55,15 @@ def alive(pid):
         os.kill(pid, 0)
     except ProcessLookupError:
         return False
+    if not sys.platform.startswith("linux"):
+        # macOS has no /proc: a missing Linux path must not hide a surviving child.
+        state = subprocess.run(
+            ["ps", "-o", "stat=", "-p", str(pid)],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        ).stdout.strip()
+        return bool(state) and not state.startswith("Z")
     try:  # a zombie is not alive: it only waits for its parent to collect it
         return Path(f"/proc/{pid}/stat").read_text().rsplit(")", 1)[1].split()[0] != "Z"
     except OSError:
@@ -202,6 +211,9 @@ class RunLocalTests(unittest.TestCase):
                 self.assertEqual(result["workload_exit_code"], status)
                 self.assertEqual(exit_code, 0 if status == 0 else run.EXIT_WORKLOAD_FAILED)
                 child = int((Path(result["output_dir"]) / "child.pid").read_text())
+                end = time.monotonic() + 5
+                while alive(child) and time.monotonic() < end:
+                    time.sleep(0.02)
                 self.assertFalse(alive(child), "a descendant survived the workload's exit")
 
     @unittest.skipUnless(sys.platform.startswith("linux"), "Linux subreaper")

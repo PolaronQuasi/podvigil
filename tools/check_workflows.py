@@ -4,6 +4,7 @@ from pathlib import Path
 import hashlib
 import io
 import os
+import platform
 import subprocess
 import tarfile
 import tempfile
@@ -13,16 +14,32 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 VERSION = "1.7.12"
 ARCHIVES = {
-    "nt": ("windows_amd64.zip", "6e7241b51e6817ea6a047693d8e6fed13b31819c9a0dd6c5a726e1592d22f6e9"),
-    "posix": (
+    "windows_amd64": (
+        "windows_amd64.zip",
+        "6e7241b51e6817ea6a047693d8e6fed13b31819c9a0dd6c5a726e1592d22f6e9",
+    ),
+    "linux_amd64": (
         "linux_amd64.tar.gz",
         "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8",
+    ),
+    "darwin_amd64": (
+        "darwin_amd64.tar.gz",
+        "5b44c3bc2255115c9b69e30efc0fecdf498fdb63c5d58e17084fd5f16324c644",
+    ),
+    "darwin_arm64": (
+        "darwin_arm64.tar.gz",
+        "aba9ced2dee8d27fecca3dc7feb1a7f9a52caefa1eb46f3271ea66b6e0e6953f",
     ),
 }
 
 
 def main():
-    suffix, expected = ARCHIVES[os.name]
+    machine = platform.machine().lower()
+    architecture = {"x86_64": "amd64", "aarch64": "arm64"}.get(machine, machine)
+    target = platform.system().lower() + "_" + architecture
+    if target not in ARCHIVES:
+        raise RuntimeError("No pinned actionlint archive for " + target)
+    suffix, expected = ARCHIVES[target]
     url = (
         "https://github.com/rhysd/actionlint/releases/download/v"
         + VERSION

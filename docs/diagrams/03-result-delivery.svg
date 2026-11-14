@@ -1,10 +1,10 @@
 <svg
   id="my-svg"
-  width="1120"
+  width="1340"
   xmlns="http://www.w3.org/2000/svg"
   xmlns:xlink="http://www.w3.org/1999/xlink"
-  height="1055"
-  viewBox="-35 -65 1120 1125"
+  height="1174"
+  viewBox="-35 -65 1340 1244"
   role="graphics-document document"
   aria-roledescription="sequence"
   aria-describedby="chart-desc-my-svg"
@@ -12,8 +12,51 @@
   style="background-color: white;"
 ><title id="chart-title-my-svg">PodVigil result delivery</title><desc
     id="chart-desc-my-svg"
-  >The supervisor stops workload writers and snapshots outputs to persistent storage. Pod deletion and verified absence come before S3 retrieval. Only a verified local backup and whole-volume audit authorize deletion of the owned volume. Incomplete recovery retains storage and reports ongoing billing risk.</desc><g
+  >The supervisor stops workload writers and snapshots outputs to persistent storage. Pod deletion and verified absence come before S3 retrieval. Only a verified local backup and whole-volume audit authorize deletion of the owned volume. Incomplete recovery retains storage and reports ongoing billing risk. Terminal records go to the local ledger. The wait command observes that ledger without doing recovery or making cloud calls.</desc><g
   >
+    <line
+      id="actor5"
+      x1="1185"
+      y1="73"
+      x2="1185"
+      y2="2000"
+      class="actor-line 200"
+      stroke-width="0.5px"
+      stroke="#999"
+      name="LEDGER"
+      data-et="life-line"
+      data-id="LEDGER"
+    />
+    <g
+      id="root-5"
+      data-look="neo"
+      data-et="participant"
+      data-type="participant"
+      data-id="LEDGER"
+    ><rect
+        x="1100"
+        y="0"
+        fill="#eaeaea"
+        stroke="#666"
+        width="170"
+        height="73"
+        name="LEDGER"
+        rx="6"
+        ry="6"
+        class="actor actor-top"
+        data-look="neo"
+        filter="url(#my-svg-drop-shadow)"
+      /><!-- prettier-ignore-start -->
+<text
+  x="1185"
+  y="36.5"
+  dominant-baseline="central"
+  alignment-baseline="central"
+  class="actor actor-box"
+  style="text-anchor: middle; font-size: 16px; font-weight: 400;"
+><tspan x="1185" dy="0">Job ledger</tspan></text>
+<!-- prettier-ignore-end --></g>
+  </g><g>
     <line
       id="actor4"
       x1="965"
@@ -433,6 +476,9 @@
   stroke: url(#my-svg-gradient);
   filter: drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));
 }
+#my-svg .edgeLabel rect {
+  opacity: 1 !important;
+}
 #my-svg :root {
   --mermaid-font-family: 'trebuchet ms', verdana, arial, sans-serif;
 }
@@ -580,9 +626,9 @@
   dy="1em"
   style="font-size: 16px; font-weight: 400;"
 ><tspan x="635">Accepted DELETE alone is not proof</tspan></text>
-<!-- prettier-ignore-end --></g><g data-et="note" data-id="i15"><rect
+<!-- prettier-ignore-end --></g><g data-et="note" data-id="i16"><rect
       x="280"
-      y="936"
+      y="969"
       fill="#EDF2AE"
       stroke="#666"
       width="710"
@@ -592,7 +638,7 @@
     /><!-- prettier-ignore-start -->
 <text
   x="635"
-  y="945"
+  y="978"
   text-anchor="middle"
   dominant-baseline="middle"
   alignment-baseline="middle"
@@ -600,23 +646,23 @@
   dy="1em"
   style="font-size: 16px; font-weight: 400;"
 ><tspan x="635">Volume retained, storage may still bill</tspan></text>
-<!-- prettier-ignore-end --></g><g data-et="control-structure" data-id="i16"><line
+<!-- prettier-ignore-end --></g><g data-et="control-structure" data-id="i17"><line
       x1="264"
       y1="588"
-      x2="1006"
+      x2="1202"
       y2="588"
       class="loopLine"
-    /><line x1="1006" y1="588" x2="1006" y2="1005" class="loopLine" /><line
+    /><line x1="1202" y1="588" x2="1202" y2="1038" class="loopLine" /><line
       x1="264"
-      y1="1005"
-      x2="1006"
-      y2="1005"
+      y1="1038"
+      x2="1202"
+      y2="1038"
       class="loopLine"
-    /><line x1="264" y1="588" x2="264" y2="1005" class="loopLine" /><line
+    /><line x1="264" y1="588" x2="264" y2="1038" class="loopLine" /><line
       x1="264"
-      y1="817"
-      x2="1006"
-      y2="817"
+      y1="800"
+      x2="1202"
+      y2="800"
       class="loopLine"
       style="stroke-dasharray: 3, 3;"
     /><polygon
@@ -634,20 +680,51 @@
 >alt</text>
 <!-- prettier-ignore-end --><!-- prettier-ignore-start -->
 <text
-  x="660"
+  x="758"
   y="612"
   text-anchor="middle"
   class="loopText"
   style="font-size: 16px; font-weight: 400;"
-><tspan x="660">[All objects covered and unchanged]</tspan></text>
+><tspan x="758">[All objects covered and unchanged]</tspan></text>
 <!-- prettier-ignore-end --><!-- prettier-ignore-start -->
 <text
-  x="635"
-  y="841"
+  x="733"
+  y="824"
   text-anchor="middle"
   class="sectionTitle"
   style="font-size: 16px; font-weight: 400;"
 >[Missing, changed or unknown objects]</text>
+<!-- prettier-ignore-end --></g><g data-et="note" data-id="i18"><rect
+      x="720"
+      y="1054"
+      fill="#EDF2AE"
+      stroke="#666"
+      width="490"
+      height="70"
+      class="note"
+      data-look="neo"
+    /><!-- prettier-ignore-start -->
+<text
+  x="965"
+  y="1063"
+  text-anchor="middle"
+  dominant-baseline="middle"
+  alignment-baseline="middle"
+  class="noteText"
+  dy="1em"
+  style="font-size: 16px; font-weight: 400;"
+><tspan x="965">wait reads terminal status from the ledger.</tspan></text>
+<!-- prettier-ignore-end --><!-- prettier-ignore-start -->
+<text
+  x="965"
+  y="1080"
+  text-anchor="middle"
+  dominant-baseline="middle"
+  alignment-baseline="middle"
+  class="noteText"
+  dy="1em"
+  style="font-size: 16px; font-weight: 400;"
+><tspan x="965">It performs no API, S3 or cleanup actions.</tspan></text>
 <!-- prettier-ignore-end --></g><!-- prettier-ignore-start -->
 <text
   x="86"
@@ -897,7 +974,7 @@
     style="fill: none;"
   /><!-- prettier-ignore-start -->
 <text
-  x="852"
+  x="962"
   y="744"
   text-anchor="middle"
   dominant-baseline="middle"
@@ -905,28 +982,17 @@
   class="messageText"
   dy="1em"
   style="font-size: 16px; font-weight: 400;"
->Record complete backup and</text>
-<!-- prettier-ignore-end --><!-- prettier-ignore-start -->
-<text
-  x="852"
-  y="761"
-  text-anchor="middle"
-  dominant-baseline="middle"
-  alignment-baseline="middle"
-  class="messageText"
-  dy="1em"
-  style="font-size: 16px; font-weight: 400;"
->cleanup</text>
+>Summary: workload outcome and verified cleanup</text>
 <!-- prettier-ignore-end --><line
     x1="746"
-    y1="796"
-    x2="958"
-    y2="796"
+    y1="779"
+    x2="1178"
+    y2="779"
     class="messageLine1"
     data-et="message"
     data-id="i12"
     data-from="CTRL"
-    data-to="BACK"
+    data-to="LEDGER"
     stroke-width="2"
     stroke="none"
     marker-end="url(#my-svg-arrowhead)"
@@ -934,7 +1000,7 @@
   /><!-- prettier-ignore-start -->
 <text
   x="852"
-  y="868"
+  y="851"
   text-anchor="middle"
   dominant-baseline="middle"
   alignment-baseline="middle"
@@ -945,7 +1011,7 @@
 <!-- prettier-ignore-end --><!-- prettier-ignore-start -->
 <text
   x="852"
-  y="885"
+  y="868"
   text-anchor="middle"
   dominant-baseline="middle"
   alignment-baseline="middle"
@@ -955,9 +1021,9 @@
 >recovery evidence</text>
 <!-- prettier-ignore-end --><line
     x1="746"
-    y1="920"
+    y1="903"
     x2="958"
-    y2="920"
+    y2="903"
     class="messageLine1"
     data-et="message"
     data-id="i14"
@@ -968,5 +1034,30 @@
     marker-end="url(#my-svg-arrowhead)"
     style="stroke-dasharray: 3, 3; fill: none;"
   /><!-- prettier-ignore-start -->
-<text x="455" y="-25">Results survive compute termination</text>
+<text
+  x="962"
+  y="918"
+  text-anchor="middle"
+  dominant-baseline="middle"
+  alignment-baseline="middle"
+  class="messageText"
+  dy="1em"
+  style="font-size: 16px; font-weight: 400;"
+>Launch failure or watchdog recovery handoff</text>
+<!-- prettier-ignore-end --><line
+    x1="746"
+    y1="953"
+    x2="1178"
+    y2="953"
+    class="messageLine1"
+    data-et="message"
+    data-id="i15"
+    data-from="CTRL"
+    data-to="LEDGER"
+    stroke-width="2"
+    stroke="none"
+    marker-end="url(#my-svg-arrowhead)"
+    style="stroke-dasharray: 3, 3; fill: none;"
+  /><!-- prettier-ignore-start -->
+<text x="565" y="-25">Results survive compute termination</text>
 <!-- prettier-ignore-end --></svg>

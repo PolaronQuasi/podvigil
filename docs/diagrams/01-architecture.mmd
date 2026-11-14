@@ -3,17 +3,19 @@ title: Owned compute, independent supervision, durable results
 ---
 flowchart LR
   accTitle: PodVigil architecture
-  accDescr: A local controller and detached watchdog share a job ledger. They manage an owned Runpod Secure Cloud Pod through the provider API. Inside the Pod a privileged guard supervises an unprivileged workload and snapshots local outputs to a private network volume. A local backup is verified before that volume can be deleted.
+  accDescr: A local controller and detached watchdog preserve each attempt's ledger. The wait command reads a ledger without cloud access or changing the job. Optional capacity retries require a definite no-capacity answer and verified absence, then poll the catalog before another attempt. The controller manages an owned Runpod Secure Cloud Pod through the provider API. Inside the Pod a privileged guard supervises an unprivileged workload and snapshots local outputs to a private network volume. A local backup is verified before that volume can be deleted.
 
   subgraph LOCAL["YOUR COMPUTER"]
     direction TB
-    CLI["podvigil command<br/>Plan, launch, inspect, recover"] --> CTRL["Controller<br/>Policy and ownership checks"]
+    CLI["podvigil command<br/>Plan and launch<br/>Inspect and recover"] --> CTRL["Controller<br/>Ownership and cost<br/>Verified capacity retries"]
+    CLI --> WAIT["wait JOB<br/>Read local ledger<br/>Job unaffected"]
     CTRL --> WATCH["Detached watchdog<br/>Independent deadline and recovery"]
-    CTRL -.-> LEDGER[("Job ledger<br/>Ownership and cleanup evidence")]
+    CTRL -.-> LEDGER[("Attempt ledger<br/>Ownership, cleanup<br/>Outcome evidence")]
     WATCH -.-> LEDGER
+    WAIT -.->|"read only"| LEDGER
   end
 
-  API["Runpod API<br/>Explicit Secure Cloud requests"]
+  API["Runpod API<br/>Catalog and price<br/>Secure Cloud only"]
 
   subgraph POD["OWNED SECURE CLOUD POD"]
     direction TB
@@ -30,7 +32,7 @@ flowchart LR
     BACKUP --> AUDIT["Audit all volume objects<br/>Then delete owned storage"]
   end
 
-  LOCAL -->|"create, verify, delete"| API
+  LOCAL -->|"catalog reads<br/>create, verify, delete"| API
   API --> POD
   POD -->|"supervisor snapshot"| RESULTS
 
@@ -38,6 +40,6 @@ flowchart LR
   classDef store fill:#e7f5ef,stroke:#35745d,color:#163c2f,stroke-width:1.5px;
   classDef external fill:#f1ecfa,stroke:#7d60ad,color:#382650,stroke-width:2px;
 
-  class CLI,CTRL,WATCH,GUARD,WORK,AUDIT primary;
+  class CLI,CTRL,WAIT,WATCH,GUARD,WORK,AUDIT primary;
   class LEDGER,BACKUP,DISK,VOLUME store;
   class API external;

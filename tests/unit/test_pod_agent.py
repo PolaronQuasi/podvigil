@@ -81,10 +81,8 @@ class PodReviewTests(unittest.TestCase):
         original = os.scandir
 
         def scan(path):
-            actual = (
-                Path(os.readlink(f"/proc/self/fd/{path}")) if isinstance(path, int) else Path(path)
-            )
-            if actual == blocked:
+            info = os.fstat(path) if isinstance(path, int) else os.stat(path)
+            if os.path.samestat(info, blocked.stat()):
                 raise PermissionError("injected unreadable directory")
             return original(path)
 
@@ -169,7 +167,11 @@ class PodReviewTests(unittest.TestCase):
 
     @unittest.skipUnless(os.name == "posix", "Linux filesystem semantics")
     def test_case_collisions_preserved_in_bundle(self):
-        (self.output / "Model.bin").write_bytes(b"different")
+        try:
+            with (self.output / "Model.bin").open("xb") as stream:
+                stream.write(b"different")
+        except FileExistsError:
+            self.skipTest("Requires a case-sensitive filesystem")
         self.assertEqual(agent.make_manifest(self.job, self.folder)["version"], 2)
 
     @unittest.skipUnless(os.name == "posix", "Linux special files")

@@ -4,6 +4,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 import copy
+import errno
 import hashlib
 import io
 import json
@@ -355,13 +356,12 @@ class BundlePosixTests(unittest.TestCase):
         (self.output / "train.log").write_bytes(b"dummy log")
         (self.output / "metrics.json").write_text("{}")
 
-    def test_actual_odd_names_symlinks_hardlinks_and_directory_modes_roundtrip(self):
+    def roundtrip_names(self, paths):
         external = self.root / "dummy-credential"
         external.write_bytes(b"must never be opened")
         (self.output / "external").symlink_to(external)
         folder = self.output / "dir:odd"
         folder.mkdir(mode=0o750)
-        paths = ["Case", "case", "trailing.", "NUL.txt", "a\\b", "new\nline", "bad-\udcff"]
         for name in paths:
             (folder / name).write_bytes(os.fsencode(name))
         os.link(folder / "Case", self.output / "hardcopy")
@@ -387,6 +387,28 @@ class BundlePosixTests(unittest.TestCase):
         for name in paths:
             self.assertEqual((tree / "dir:odd" / name).read_bytes(), os.fsencode(name))
         self.assertEqual(external.read_bytes(), b"must never be opened")
+
+    def test_actual_odd_names_symlinks_hardlinks_and_directory_modes_roundtrip(self):
+        self.roundtrip_names(["Case", "trailing.", "NUL.txt", "a\\b", "new\nline"])
+
+    def test_case_collisions_roundtrip_on_a_case_sensitive_filesystem(self):
+        (self.root / "case-probe").write_bytes(b"probe")
+        if (self.root / "CASE-PROBE").exists():
+            self.skipTest("Requires a case-sensitive filesystem")
+        self.roundtrip_names(["Case", "case"])
+
+    def test_non_utf8_names_roundtrip_where_the_filesystem_accepts_them(self):
+        probe = self.root / "bad-\udcff"
+        try:
+            probe.write_bytes(b"probe")
+        except OSError as exc:
+            if exc.errno not in (errno.EILSEQ, errno.EINVAL):
+                raise
+            self.skipTest("Filesystem rejects non-UTF-8 names")
+        except UnicodeEncodeError:
+            self.skipTest("Filesystem encoding rejects this name")
+        probe.unlink()
+        self.roundtrip_names(["Case", "bad-\udcff"])
 
     def test_external_hardlinks_and_special_files_rejected_before_content_open(self):
         outside = self.root / "dummy-outside"

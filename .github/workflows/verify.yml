@@ -53,6 +53,12 @@ jobs:
           - os: windows-2025
             python: '3.12'
             dependencies: lock
+          - os: macos-26
+            python: '3.12'
+            dependencies: lock
+          - os: macos-26-intel
+            python: '3.12'
+            dependencies: lock
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -62,8 +68,8 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Create the project environment
         run: python -m venv .venv
-      - name: Linux locked dependencies
-        if: runner.os == 'Linux' && matrix.dependencies == 'lock'
+      - name: Unix locked dependencies
+        if: runner.os != 'Windows' && matrix.dependencies == 'lock'
         run: .venv/bin/python -m pip install -r requirements.lock.txt
       - name: Windows locked dependencies
         if: runner.os == 'Windows'
@@ -71,12 +77,20 @@ jobs:
       - name: Linux unit, fake cloud and process tests
         if: runner.os == 'Linux'
         run: .venv/bin/python -B tools/ci.py test
+      - name: macOS unit, fake cloud and process tests
+        if: runner.os == 'macOS'
+        env:
+          TMPDIR: ${{ runner.temp }}
+        run: .venv/bin/python -B tools/ci.py test
       - name: Windows unit, fake cloud and process tests
         if: runner.os == 'Windows'
         env:
           TEMP: ${{ runner.temp }}
           TMP: ${{ runner.temp }}
         run: .venv/Scripts/python.exe -B tools/ci.py test
+      - name: macOS workflow tooling
+        if: runner.os == 'macOS'
+        run: python tools/check_workflows.py
       - name: Preserve test evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -148,10 +162,50 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+  macos-packages:
+    if: github.server_url == 'https://github.com'
+    name: Installed wheel (${{ matrix.os }})
+    needs: distributions
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-26, macos-26-intel]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: distributions-${{ github.sha }}
+          path: dist/
+      - name: Verify the downloaded distributions
+        working-directory: dist
+        run: shasum -a 256 --check SHA256SUMS
+      - name: Test the release wheel without credentials
+        env:
+          TMPDIR: ${{ runner.temp }}
+        run: |
+          mkdir -p output/ci
+          set -o pipefail
+          python -B tools/ci.py smoke 2>&1 | tee output/ci/wheel-smoke.log
+      - name: Preserve package test evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: wheel-smoke-${{ matrix.os }}
+          path: output/ci/
+          if-no-files-found: warn
+          retention-days: 14
+
   required:
     name: All checks passed
     if: always() && github.server_url == 'https://github.com'
-    needs: [quality, tests, containers, distributions]
+    needs: [quality, tests, containers, distributions, macos-packages]
     runs-on: ubuntu-24.04
     timeout-minutes: 2
     env:
@@ -159,9 +213,11 @@ jobs:
       TESTS: ${{ needs.tests.result }}
       CONTAINERS: ${{ needs.containers.result }}
       DISTRIBUTIONS: ${{ needs.distributions.result }}
+      MACOS_PACKAGES: ${{ needs.macos-packages.result }}
     steps:
       - run: |
           test "$QUALITY" = success
           test "$TESTS" = success
           test "$CONTAINERS" = success
           test "$DISTRIBUTIONS" = success
+          test "$MACOS_PACKAGES" = success

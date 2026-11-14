@@ -1,11 +1,11 @@
 <svg
   id="my-svg"
-  width="606.294921875"
+  width="627.6663818359375"
   xmlns="http://www.w3.org/2000/svg"
   xmlns:xlink="http://www.w3.org/1999/xlink"
   class="flowchart"
-  height="1947.4000244140625"
-  viewBox="-16 -69 606.294921875 1947.4000244140625"
+  height="2170"
+  viewBox="-16 -69 627.6663818359375 2170"
   role="graphics-document document"
   aria-roledescription="flowchart-v2"
   aria-describedby="chart-desc-my-svg"
@@ -13,7 +13,7 @@
   style="background-color: white;"
 ><title id="chart-title-my-svg">PodVigil safe recovery</title><desc
     id="chart-desc-my-svg"
-  >Recovery starts from an existing job ledger, verifies ownership, and keeps the original deadline. Unknown creation results are reconciled without another create. Unproven ownership never authorizes deletion. Compute cleanup is verified before restoring outputs, and incomplete backup retains storage.</desc><style
+  >Waiting is an observation of the existing job ledger and never triggers recovery. A terminal phase, a watchdog no longer heard, a waiting timeout or Ctrl+C ends waiting without changing the job. The separate recover command verifies ownership and keeps the original deadline. Unknown creation results are reconciled without another create. Unproven ownership never authorizes deletion. Compute cleanup is verified before restoring outputs, and incomplete backup retains storage.</desc><style
   >
 #my-svg {
   font-family: Arial, Helvetica, sans-serif;
@@ -266,6 +266,9 @@
 #my-svg [data-look='neo'].icon-shape .icon-neo path {
   stroke: url(#my-svg-gradient);
   filter: drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));
+}
+#my-svg .edgeLabel rect {
+  opacity: 1 !important;
 }
 #my-svg :root {
   --mermaid-font-family: 'trebuchet ms', verdana, arial, sans-serif;
@@ -582,152 +585,228 @@
       <g class="clusters" />
       <g class="edges edgePaths">
         <path
-          d="M233.94999949137366,115.4000015258789L233.94999949137366,151.4000015258789"
+          d="M323.85000101725257,115.4000015258789L323.85000101725257,128.32893371401343Q323.85000101725257,135.4000015258789 316.7789332053871,135.4000015258789L241.02106730323914,135.4000015258789Q233.94999949137366,135.4000015258789 233.94999949137366,142.47106933774438L233.94999949137366,215.4000015258789"
           id="my-svg-L_START_OWN_0"
           class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link"
-          style="stroke-dasharray: 0 0 32.00000762939453 4; stroke-dashoffset: 0;;"
+          style="stroke-dasharray: 0 0 180.57174682617188 4; stroke-dashoffset: 0;;"
           data-edge="true"
           data-et="edge"
           data-id="L_START_OWN_0"
-          data-points="W3sieCI6MjMzLjk0OTk5OTQ5MTM3MzY2LCJ5IjoxMTUuNDAwMDAxNTI1ODc4OX0seyJ4IjoyMzMuOTQ5OTk5NDkxMzczNjYsInkiOjE1NS40MDAwMDE1MjU4Nzg5fV0="
+          data-points="W3sieCI6MzIzLjg1MDAwMTAxNzI1MjU3LCJ5IjoxMTUuNDAwMDAxNTI1ODc4OX0seyJ4IjozMjMuODUwMDAxMDE3MjUyNTcsInkiOjEzNS40MDAwMDE1MjU4Nzg5fSx7IngiOjIzMy45NDk5OTk0OTEzNzM2NiwieSI6MTM1LjQwMDAwMTUyNTg3ODl9LHsieCI6MjMzLjk0OTk5OTQ5MTM3MzY2LCJ5IjoyMTkuNDAwMDAxNTI1ODc4OX1d"
           data-look="neo"
           marker-end="url(#my-svg_flowchart-v2-pointEnd-margin)"
         />
         <path
-          d="M201.3499984741211,338.39998954036855L201.3499984741211,371.00000762939453L201.3499984741211,383.92893981752906Q201.3499984741211,391.00000762939453 194.27893066225562,391.00000762939453L95.07106781186548,391.00000762939453Q88,391.00000762939453 88,398.07107544126L88,423.00000762939453L88,742.6000137329102L88,790.6000137329102"
+          d="M367.85000101725257,115.4000015258789L367.85000101725257,128.32893371401343Q367.85000101725257,135.4000015258789 374.92106882911804,135.4000015258789L500.5562769553871,135.4000015258789Q507.62734476725257,135.4000015258789 507.62734476725257,142.47106933774438L507.62734476725257,241.8000030517578"
+          id="my-svg-L_START_OBSERVE_0"
+          class="edge-thickness-normal edge-pattern-dotted edge-thickness-normal edge-pattern-solid flowchart-link"
+          style="stroke-dasharray: 0 0 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 4; stroke-dashoffset: 0;;"
+          data-edge="true"
+          data-et="edge"
+          data-id="L_START_OBSERVE_0"
+          data-points="W3sieCI6MzY3Ljg1MDAwMTAxNzI1MjU3LCJ5IjoxMTUuNDAwMDAxNTI1ODc4OX0seyJ4IjozNjcuODUwMDAxMDE3MjUyNTcsInkiOjEzNS40MDAwMDE1MjU4Nzg5fSx7IngiOjUwNy42MjczNDQ3NjcyNTI1NywieSI6MTM1LjQwMDAwMTUyNTg3ODl9LHsieCI6NTA3LjYyNzM0NDc2NzI1MjU3LCJ5IjoyNDUuODAwMDAzMDUxNzU3OH1d"
+          data-look="neo"
+          marker-end="url(#my-svg_flowchart-v2-pointEnd-margin)"
+        />
+        <path
+          d="M507.62734476725257,408.6000061035156L507.62734476725257,471.00000762939453"
+          id="my-svg-L_OBSERVE_WAITEND_0"
+          class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link"
+          style="stroke-dasharray: 0 0 58.399993896484375 4; stroke-dashoffset: 0;;"
+          data-edge="true"
+          data-et="edge"
+          data-id="L_OBSERVE_WAITEND_0"
+          data-points="W3sieCI6NTA3LjYyNzM0NDc2NzI1MjU3LCJ5Ijo0MDguNjAwMDA2MTAzNTE1Nn0seyJ4Ijo1MDcuNjI3MzQ0NzY3MjUyNTcsInkiOjQ3NS4wMDAwMDc2MjkzOTQ1M31d"
+          data-look="neo"
+          marker-end="url(#my-svg_flowchart-v2-pointEnd-margin)"
+        />
+        <path
+          d="M201.3499984741211,402.39998954036855L201.3499984741211,435.00000762939453L201.3499984741211,447.92893981752906Q201.3499984741211,455.00000762939453 194.27893066225562,455.00000762939453L95.07106781186548,455.00000762939453Q88,455.00000762939453 88,462.07107544126L88,566.3000106811523L88,965.2000198364258L88,1013.2000198364258"
           id="my-svg-L_OWN_RECON_0"
           class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link"
-          style="stroke-dasharray: 0 0 556.2217407226562 4; stroke-dashoffset: 0;;"
+          style="stroke-dasharray: 0 0 714.8217163085938 4; stroke-dashoffset: 0;;"
           data-edge="true"
           data-et="edge"
           data-id="L_OWN_RECON_0"
-          data-points="W3sieCI6MjAxLjM0OTk5ODQ3NDEyMTEsInkiOjMzOC4zOTk5ODk1NDAzNjg1NX0seyJ4IjoyMDEuMzQ5OTk4NDc0MTIxMSwieSI6MzcxLjAwMDAwNzYyOTM5NDUzfSx7IngiOjIwMS4zNDk5OTg0NzQxMjExLCJ5IjozOTEuMDAwMDA3NjI5Mzk0NTN9LHsieCI6ODgsInkiOjM5MS4wMDAwMDc2MjkzOTQ1M30seyJ4Ijo4OCwieSI6NDIzLjAwMDAwNzYyOTM5NDUzfSx7IngiOjg4LCJ5Ijo3NDIuNjAwMDEzNzMyOTEwMn0seyJ4Ijo4OCwieSI6Nzk0LjYwMDAxMzczMjkxMDJ9XQ=="
+          data-points="W3sieCI6MjAxLjM0OTk5ODQ3NDEyMTEsInkiOjQwMi4zOTk5ODk1NDAzNjg1NX0seyJ4IjoyMDEuMzQ5OTk4NDc0MTIxMSwieSI6NDM1LjAwMDAwNzYyOTM5NDUzfSx7IngiOjIwMS4zNDk5OTg0NzQxMjExLCJ5Ijo0NTUuMDAwMDA3NjI5Mzk0NTN9LHsieCI6ODgsInkiOjQ1NS4wMDAwMDc2MjkzOTQ1M30seyJ4Ijo4OCwieSI6NTY2LjMwMDAxMDY4MTE1MjN9LHsieCI6ODgsInkiOjk2NS4yMDAwMTk4MzY0MjU4fSx7IngiOjg4LCJ5IjoxMDE3LjIwMDAxOTgzNjQyNTh9XQ=="
           data-look="neo"
           marker-end="url(#my-svg_flowchart-v2-pointEnd-margin)"
         />
         <path
-          d="M88,937.6000137329102L88,1029.3000144958496L88,1142.900016784668L88,1177.7289504986813Q88,1184.8000183105469 95.07106781186548,1184.8000183105469L110.88401031313452,1184.8000183105469Q117.955078125,1184.8000183105469 117.955078125,1191.8710861224124L117.955078125,1200.8000183105469"
+          d="M88,1160.2000198364258L88,1251.9000205993652L88,1365.5000228881836L88,1400.328956602197Q88,1407.4000244140625 95.07106781186548,1407.4000244140625L110.88401031313452,1407.4000244140625Q117.955078125,1407.4000244140625 117.955078125,1414.471092225928L117.955078125,1423.4000244140625"
           id="my-svg-L_RECON_UNKNOWN_0"
           class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link"
           style="stroke-dasharray: 0 0 283.8267822265625 4; stroke-dashoffset: 0;;"
           data-edge="true"
           data-et="edge"
           data-id="L_RECON_UNKNOWN_0"
-          data-points="W3sieCI6ODgsInkiOjkzNy42MDAwMTM3MzI5MTAyfSx7IngiOjg4LCJ5IjoxMDI5LjMwMDAxNDQ5NTg0OTZ9LHsieCI6ODgsInkiOjExNDIuOTAwMDE2Nzg0NjY4fSx7IngiOjg4LCJ5IjoxMTg0LjgwMDAxODMxMDU0Njl9LHsieCI6MTE3Ljk1NTA3ODEyNSwieSI6MTE4NC44MDAwMTgzMTA1NDY5fSx7IngiOjExNy45NTUwNzgxMjUsInkiOjEyMDQuODAwMDE4MzEwNTQ2OX1d"
+          data-points="W3sieCI6ODgsInkiOjExNjAuMjAwMDE5ODM2NDI1OH0seyJ4Ijo4OCwieSI6MTI1MS45MDAwMjA1OTkzNjUyfSx7IngiOjg4LCJ5IjoxMzY1LjUwMDAyMjg4ODE4MzZ9LHsieCI6ODgsInkiOjE0MDcuNDAwMDI0NDE0MDYyNX0seyJ4IjoxMTcuOTU1MDc4MTI1LCJ5IjoxNDA3LjQwMDAyNDQxNDA2MjV9LHsieCI6MTE3Ljk1NTA3ODEyNSwieSI6MTQyNy40MDAwMjQ0MTQwNjI1fV0="
           data-look="neo"
           marker-end="url(#my-svg_flowchart-v2-pointEnd-margin)"
         />
         <path
-          d="M266.5500005086263,338.39998954036855L266.5500005086263,371.00000762939453L266.5500005086263,383.92893981752906Q266.5500005086263,391.00000762939453 273.62106832049176,391.00000762939453L339.1789321881345,391.00000762939453Q346.25,391.00000762939453 346.25,398.07107544126L346.25,471.00000762939453"
+          d="M266.5500005086263,402.39998954036855L266.5500005086263,435.00000762939453L266.5500005086263,447.92893981752906Q266.5500005086263,455.00000762939453 273.62106832049176,455.00000762939453L339.1789321881345,455.00000762939453Q346.25,455.00000762939453 346.25,462.07107544126L346.25,693.6000137329102"
           id="my-svg-L_OWN_COMPUTE_0"
           class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link"
-          style="stroke-dasharray: 0 0 202.9717254638672 4; stroke-dashoffset: 0;;"
+          style="stroke-dasharray: 0 0 361.57177734375 4; stroke-dashoffset: 0;;"
           data-edge="true"
           data-et="edge"
           data-id="L_OWN_COMPUTE_0"
-          data-points="W3sieCI6MjY2LjU1MDAwMDUwODYyNjMsInkiOjMzOC4zOTk5ODk1NDAzNjg1NX0seyJ4IjoyNjYuNTUwMDAwNTA4NjI2MywieSI6MzcxLjAwMDAwNzYyOTM5NDUzfSx7IngiOjI2Ni41NTAwMDA1MDg2MjYzLCJ5IjozOTEuMDAwMDA3NjI5Mzk0NTN9LHsieCI6MzQ2LjI1LCJ5IjozOTEuMDAwMDA3NjI5Mzk0NTN9LHsieCI6MzQ2LjI1LCJ5Ijo0NzUuMDAwMDA3NjI5Mzk0NTN9XQ=="
+          data-points="W3sieCI6MjY2LjU1MDAwMDUwODYyNjMsInkiOjQwMi4zOTk5ODk1NDAzNjg1NX0seyJ4IjoyNjYuNTUwMDAwNTA4NjI2MywieSI6NDM1LjAwMDAwNzYyOTM5NDUzfSx7IngiOjI2Ni41NTAwMDA1MDg2MjYzLCJ5Ijo0NTUuMDAwMDA3NjI5Mzk0NTN9LHsieCI6MzQ2LjI1LCJ5Ijo0NTUuMDAwMDA3NjI5Mzk0NTN9LHsieCI6MzQ2LjI1LCJ5Ijo2OTcuNjAwMDEzNzMyOTEwMn1d"
           data-look="neo"
           marker-end="url(#my-svg_flowchart-v2-pointEnd-margin)"
         />
         <path
-          d="M313.6499989827474,657.9999956438842L313.6499989827474,690.6000137329102L313.6499989827474,703.5289459210446Q313.6499989827474,710.6000137329102 306.5789311708819,710.6000137329102L287.0710678118655,710.6000137329102Q280,710.6000137329102 280,717.6710815447757L280,790.6000137329102"
+          d="M313.64999898274743,880.6000017473998L313.64999898274743,913.2000198364258L313.64999898274743,926.1289520245602Q313.64999898274743,933.2000198364258 306.57893117088196,933.2000198364258L287.0710678118655,933.2000198364258Q280,933.2000198364258 280,940.2710876482913L280,1013.2000198364258"
           id="my-svg-L_COMPUTE_DELETE_0"
           class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link"
-          style="stroke-dasharray: 0 0 156.92173767089844 4; stroke-dashoffset: 0;;"
+          style="stroke-dasharray: 0 0 156.92176818847656 4; stroke-dashoffset: 0;;"
           data-edge="true"
           data-et="edge"
           data-id="L_COMPUTE_DELETE_0"
-          data-points="W3sieCI6MzEzLjY0OTk5ODk4Mjc0NzQsInkiOjY1Ny45OTk5OTU2NDM4ODQyfSx7IngiOjMxMy42NDk5OTg5ODI3NDc0LCJ5Ijo2OTAuNjAwMDEzNzMyOTEwMn0seyJ4IjozMTMuNjQ5OTk4OTgyNzQ3NCwieSI6NzEwLjYwMDAxMzczMjkxMDJ9LHsieCI6MjgwLCJ5Ijo3MTAuNjAwMDEzNzMyOTEwMn0seyJ4IjoyODAsInkiOjc5NC42MDAwMTM3MzI5MTAyfV0="
+          data-points="W3sieCI6MzEzLjY0OTk5ODk4Mjc0NzQzLCJ5Ijo4ODAuNjAwMDAxNzQ3Mzk5OH0seyJ4IjozMTMuNjQ5OTk4OTgyNzQ3NDMsInkiOjkxMy4yMDAwMTk4MzY0MjU4fSx7IngiOjMxMy42NDk5OTg5ODI3NDc0MywieSI6OTMzLjIwMDAxOTgzNjQyNTh9LHsieCI6MjgwLCJ5Ijo5MzMuMjAwMDE5ODM2NDI1OH0seyJ4IjoyODAsInkiOjEwMTcuMjAwMDE5ODM2NDI1OH1d"
           data-look="neo"
           marker-end="url(#my-svg_flowchart-v2-pointEnd-margin)"
         />
         <path
-          d="M280,937.6000137329102L280,973.6000137329102"
+          d="M280,1160.2000198364258L280,1196.2000198364258"
           id="my-svg-L_DELETE_READ_0"
           class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link"
           style="stroke-dasharray: 0 0 32 4; stroke-dashoffset: 0;;"
           data-edge="true"
           data-et="edge"
           data-id="L_DELETE_READ_0"
-          data-points="W3sieCI6MjgwLCJ5Ijo5MzcuNjAwMDEzNzMyOTEwMn0seyJ4IjoyODAsInkiOjk3Ny42MDAwMTM3MzI5MTAyfV0="
+          data-points="W3sieCI6MjgwLCJ5IjoxMTYwLjIwMDAxOTgzNjQyNTh9LHsieCI6MjgwLCJ5IjoxMjAwLjIwMDAxOTgzNjQyNTh9XQ=="
           data-look="neo"
           marker-end="url(#my-svg_flowchart-v2-pointEnd-margin)"
         />
         <path
-          d="M258,1081.000015258789L258,1093.9289474469235Q258,1101.000015258789 250.92893218813452,1101.000015258789L232.02614593686548,1101.000015258789Q224.955078125,1101.000015258789 224.955078125,1108.0710830706546L224.955078125,1177.7289504986813Q224.955078125,1184.8000183105469 217.88401031313452,1184.8000183105469L169.02614593686548,1184.8000183105469Q161.955078125,1184.8000183105469 161.955078125,1191.8710861224124L161.955078125,1200.8000183105469"
+          d="M258,1303.6000213623047L258,1316.5289535504392Q258,1323.6000213623047 250.92893218813452,1323.6000213623047L232.02614593686548,1323.6000213623047Q224.955078125,1323.6000213623047 224.955078125,1330.6710891741702L224.955078125,1400.328956602197Q224.955078125,1407.4000244140625 217.88401031313452,1407.4000244140625L169.02614593686548,1407.4000244140625Q161.955078125,1407.4000244140625 161.955078125,1414.471092225928L161.955078125,1423.4000244140625"
           id="my-svg-L_READ_UNKNOWN_0"
           class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link"
-          style="stroke-dasharray: 0 0 201.1883544921875 4; stroke-dashoffset: 0;;"
+          style="stroke-dasharray: 0 0 201.18853759765625 4; stroke-dashoffset: 0;;"
           data-edge="true"
           data-et="edge"
           data-id="L_READ_UNKNOWN_0"
-          data-points="W3sieCI6MjU4LCJ5IjoxMDgxLjAwMDAxNTI1ODc4OX0seyJ4IjoyNTgsInkiOjExMDEuMDAwMDE1MjU4Nzg5fSx7IngiOjIyNC45NTUwNzgxMjUsInkiOjExMDEuMDAwMDE1MjU4Nzg5fSx7IngiOjIyNC45NTUwNzgxMjUsInkiOjExODQuODAwMDE4MzEwNTQ2OX0seyJ4IjoxNjEuOTU1MDc4MTI1LCJ5IjoxMTg0LjgwMDAxODMxMDU0Njl9LHsieCI6MTYxLjk1NTA3ODEyNSwieSI6MTIwNC44MDAwMTgzMTA1NDY5fV0="
+          data-points="W3sieCI6MjU4LCJ5IjoxMzAzLjYwMDAyMTM2MjMwNDd9LHsieCI6MjU4LCJ5IjoxMzIzLjYwMDAyMTM2MjMwNDd9LHsieCI6MjI0Ljk1NTA3ODEyNSwieSI6MTMyMy42MDAwMjEzNjIzMDQ3fSx7IngiOjIyNC45NTUwNzgxMjUsInkiOjE0MDcuNDAwMDI0NDE0MDYyNX0seyJ4IjoxNjEuOTU1MDc4MTI1LCJ5IjoxNDA3LjQwMDAyNDQxNDA2MjV9LHsieCI6MTYxLjk1NTA3ODEyNSwieSI6MTQyNy40MDAwMjQ0MTQwNjI1fV0="
           data-look="neo"
           marker-end="url(#my-svg_flowchart-v2-pointEnd-margin)"
         />
         <path
-          d="M302,1081.000015258789L302,1093.9289474469235Q302,1101.000015258789 309.0710678118655,1101.000015258789L327.9738540631345,1101.000015258789Q335.044921875,1101.000015258789 335.044921875,1108.0710830706546L335.044921875,1177.7289504986813Q335.044921875,1184.8000183105469 342.1159896868655,1184.8000183105469L361.2238540631345,1184.8000183105469Q368.294921875,1184.8000183105469 368.294921875,1191.8710861224124L368.294921875,1227.2000198364258"
+          d="M302,1303.6000213623047L302,1316.5289535504392Q302,1323.6000213623047 309.0710678118655,1323.6000213623047L327.9738540631345,1323.6000213623047Q335.044921875,1323.6000213623047 335.044921875,1330.6710891741702L335.044921875,1400.328956602197Q335.044921875,1407.4000244140625 342.1159896868655,1407.4000244140625L361.2238540631345,1407.4000244140625Q368.294921875,1407.4000244140625 368.294921875,1414.471092225928L368.294921875,1449.8000259399414"
           id="my-svg-L_READ_BACKUP_0"
           class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link"
-          style="stroke-dasharray: 0 0 197.83834838867188 4; stroke-dashoffset: 0;;"
+          style="stroke-dasharray: 0 0 197.8385467529297 4; stroke-dashoffset: 0;;"
           data-edge="true"
           data-et="edge"
           data-id="L_READ_BACKUP_0"
-          data-points="W3sieCI6MzAyLCJ5IjoxMDgxLjAwMDAxNTI1ODc4OX0seyJ4IjozMDIsInkiOjExMDEuMDAwMDE1MjU4Nzg5fSx7IngiOjMzNS4wNDQ5MjE4NzUsInkiOjExMDEuMDAwMDE1MjU4Nzg5fSx7IngiOjMzNS4wNDQ5MjE4NzUsInkiOjExODQuODAwMDE4MzEwNTQ2OX0seyJ4IjozNjguMjk0OTIxODc1LCJ5IjoxMTg0LjgwMDAxODMxMDU0Njl9LHsieCI6MzY4LjI5NDkyMTg3NSwieSI6MTIzMS4yMDAwMTk4MzY0MjU4fV0="
+          data-points="W3sieCI6MzAyLCJ5IjoxMzAzLjYwMDAyMTM2MjMwNDd9LHsieCI6MzAyLCJ5IjoxMzIzLjYwMDAyMTM2MjMwNDd9LHsieCI6MzM1LjA0NDkyMTg3NSwieSI6MTMyMy42MDAwMjEzNjIzMDQ3fSx7IngiOjMzNS4wNDQ5MjE4NzUsInkiOjE0MDcuNDAwMDI0NDE0MDYyNX0seyJ4IjozNjguMjk0OTIxODc1LCJ5IjoxNDA3LjQwMDAyNDQxNDA2MjV9LHsieCI6MzY4LjI5NDkyMTg3NSwieSI6MTQ1My44MDAwMjU5Mzk5NDE0fV0="
           data-look="neo"
           marker-end="url(#my-svg_flowchart-v2-pointEnd-margin)"
         />
         <path
-          d="M378.8500010172526,657.9999956438842L378.8500010172526,690.6000137329102L378.8500010172526,703.5289459210446Q378.8500010172526,710.6000137329102 385.9210688291181,710.6000137329102L408.7394790631345,710.6000137329102Q415.810546875,710.6000137329102 415.810546875,717.6710815447757L415.810546875,742.6000137329102L415.810546875,1029.3000144958496L415.810546875,1142.900016784668L415.810546875,1183.0422058105469Q415.810546875,1184.8000183105469 414.052734375,1184.8000183105469L414.052734375,1184.8000183105469Q412.294921875,1184.8000183105469 412.294921875,1186.5578308105469L412.294921875,1227.2000198364258"
+          d="M378.8500010172526,880.6000017473998L378.8500010172526,913.2000198364258L378.8500010172526,926.1289520245602Q378.8500010172526,933.2000198364258 385.9210688291181,933.2000198364258L408.7394790631345,933.2000198364258Q415.810546875,933.2000198364258 415.810546875,940.2710876482913L415.810546875,965.2000198364258L415.810546875,1251.9000205993652L415.810546875,1365.5000228881836L415.810546875,1405.6422119140625Q415.810546875,1407.4000244140625 414.052734375,1407.4000244140625L414.052734375,1407.4000244140625Q412.294921875,1407.4000244140625 412.294921875,1409.1578369140625L412.294921875,1449.8000259399414"
           id="my-svg-L_COMPUTE_BACKUP_0"
           class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link"
-          style="stroke-dasharray: 0 0 599.0235595703125 4; stroke-dashoffset: 0;;"
+          style="stroke-dasharray: 0 0 599.0236206054688 4; stroke-dashoffset: 0;;"
           data-edge="true"
           data-et="edge"
           data-id="L_COMPUTE_BACKUP_0"
-          data-points="W3sieCI6Mzc4Ljg1MDAwMTAxNzI1MjYsInkiOjY1Ny45OTk5OTU2NDM4ODQyfSx7IngiOjM3OC44NTAwMDEwMTcyNTI2LCJ5Ijo2OTAuNjAwMDEzNzMyOTEwMn0seyJ4IjozNzguODUwMDAxMDE3MjUyNiwieSI6NzEwLjYwMDAxMzczMjkxMDJ9LHsieCI6NDE1LjgxMDU0Njg3NSwieSI6NzEwLjYwMDAxMzczMjkxMDJ9LHsieCI6NDE1LjgxMDU0Njg3NSwieSI6NzQyLjYwMDAxMzczMjkxMDJ9LHsieCI6NDE1LjgxMDU0Njg3NSwieSI6MTAyOS4zMDAwMTQ0OTU4NDk2fSx7IngiOjQxNS44MTA1NDY4NzUsInkiOjExNDIuOTAwMDE2Nzg0NjY4fSx7IngiOjQxNS44MTA1NDY4NzUsInkiOjExODQuODAwMDE4MzEwNTQ2OX0seyJ4Ijo0MTIuMjk0OTIxODc1LCJ5IjoxMTg0LjgwMDAxODMxMDU0Njl9LHsieCI6NDEyLjI5NDkyMTg3NSwieSI6MTIzMS4yMDAwMTk4MzY0MjU4fV0="
+          data-points="W3sieCI6Mzc4Ljg1MDAwMTAxNzI1MjYsInkiOjg4MC42MDAwMDE3NDczOTk4fSx7IngiOjM3OC44NTAwMDEwMTcyNTI2LCJ5Ijo5MTMuMjAwMDE5ODM2NDI1OH0seyJ4IjozNzguODUwMDAxMDE3MjUyNiwieSI6OTMzLjIwMDAxOTgzNjQyNTh9LHsieCI6NDE1LjgxMDU0Njg3NSwieSI6OTMzLjIwMDAxOTgzNjQyNTh9LHsieCI6NDE1LjgxMDU0Njg3NSwieSI6OTY1LjIwMDAxOTgzNjQyNTh9LHsieCI6NDE1LjgxMDU0Njg3NSwieSI6MTI1MS45MDAwMjA1OTkzNjUyfSx7IngiOjQxNS44MTA1NDY4NzUsInkiOjEzNjUuNTAwMDIyODg4MTgzNn0seyJ4Ijo0MTUuODEwNTQ2ODc1LCJ5IjoxNDA3LjQwMDAyNDQxNDA2MjV9LHsieCI6NDEyLjI5NDkyMTg3NSwieSI6MTQwNy40MDAwMjQ0MTQwNjI1fSx7IngiOjQxMi4yOTQ5MjE4NzUsInkiOjE0NTMuODAwMDI1OTM5OTQxNH1d"
           data-look="neo"
           marker-end="url(#my-svg_flowchart-v2-pointEnd-margin)"
         />
         <path
-          d="M390.294921875,1314.8000183105469L390.294921875,1403.6000213623047"
+          d="M390.294921875,1537.4000244140625L390.294921875,1626.2000274658203"
           id="my-svg-L_BACKUP_AUDIT_0"
           class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link"
-          style="stroke-dasharray: 0 0 84.7999267578125 4; stroke-dashoffset: 0;;"
+          style="stroke-dasharray: 0 0 84.800048828125 4; stroke-dashoffset: 0;;"
           data-edge="true"
           data-et="edge"
           data-id="L_BACKUP_AUDIT_0"
-          data-points="W3sieCI6MzkwLjI5NDkyMTg3NSwieSI6MTMxNC44MDAwMTgzMTA1NDY5fSx7IngiOjM5MC4yOTQ5MjE4NzUsInkiOjE0MDcuNjAwMDIxMzYyMzA0N31d"
+          data-points="W3sieCI6MzkwLjI5NDkyMTg3NSwieSI6MTUzNy40MDAwMjQ0MTQwNjI1fSx7IngiOjM5MC4yOTQ5MjE4NzUsInkiOjE2MzAuMjAwMDI3NDY1ODIwM31d"
           data-look="neo"
           marker-end="url(#my-svg_flowchart-v2-pointEnd-margin)"
         />
         <path
-          d="M360.99492136637366,1574.099935456412L360.99492136637366,1603.4000244140625L360.99492136637366,1616.328956602197Q360.99492136637366,1623.4000244140625 353.9238535545082,1623.4000244140625L301.3659896868655,1623.4000244140625Q294.294921875,1623.4000244140625 294.294921875,1630.471092225928L294.294921875,1703.4000244140625"
+          d="M360.99492136637366,1796.6999415599275L360.99492136637366,1826.0000305175781L360.99492136637366,1838.9289627057126Q360.99492136637366,1846.0000305175781 353.9238535545082,1846.0000305175781L301.3659896868655,1846.0000305175781Q294.294921875,1846.0000305175781 294.294921875,1853.0710983294437L294.294921875,1926.0000305175781"
           id="my-svg-L_AUDIT_REMOVE_0"
           class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link"
           style="stroke-dasharray: 0 0 186.67185974121094 4; stroke-dashoffset: 0;;"
           data-edge="true"
           data-et="edge"
           data-id="L_AUDIT_REMOVE_0"
-          data-points="W3sieCI6MzYwLjk5NDkyMTM2NjM3MzY2LCJ5IjoxNTc0LjA5OTkzNTQ1NjQxMn0seyJ4IjozNjAuOTk0OTIxMzY2MzczNjYsInkiOjE2MDMuNDAwMDI0NDE0MDYyNX0seyJ4IjozNjAuOTk0OTIxMzY2MzczNjYsInkiOjE2MjMuNDAwMDI0NDE0MDYyNX0seyJ4IjoyOTQuMjk0OTIxODc1LCJ5IjoxNjIzLjQwMDAyNDQxNDA2MjV9LHsieCI6Mjk0LjI5NDkyMTg3NSwieSI6MTcwNy40MDAwMjQ0MTQwNjI1fV0="
+          data-points="W3sieCI6MzYwLjk5NDkyMTM2NjM3MzY2LCJ5IjoxNzk2LjY5OTk0MTU1OTkyNzV9LHsieCI6MzYwLjk5NDkyMTM2NjM3MzY2LCJ5IjoxODI2LjAwMDAzMDUxNzU3ODF9LHsieCI6MzYwLjk5NDkyMTM2NjM3MzY2LCJ5IjoxODQ2LjAwMDAzMDUxNzU3ODF9LHsieCI6Mjk0LjI5NDkyMTg3NSwieSI6MTg0Ni4wMDAwMzA1MTc1NzgxfSx7IngiOjI5NC4yOTQ5MjE4NzUsInkiOjE5MzAuMDAwMDMwNTE3NTc4MX1d"
           data-look="neo"
           marker-end="url(#my-svg_flowchart-v2-pointEnd-margin)"
         />
         <path
-          d="M419.5949223836263,1574.099935456412L419.5949223836263,1603.4000244140625L419.5949223836263,1616.328956602197Q419.5949223836263,1623.4000244140625 426.66599019549176,1623.4000244140625L479.2238540631345,1623.4000244140625Q486.294921875,1623.4000244140625 486.294921875,1630.471092225928L486.294921875,1703.4000244140625"
+          d="M419.5949223836263,1796.6999415599275L419.5949223836263,1826.0000305175781L419.5949223836263,1838.9289627057126Q419.5949223836263,1846.0000305175781 426.66599019549176,1846.0000305175781L479.2238540631345,1846.0000305175781Q486.294921875,1846.0000305175781 486.294921875,1853.0710983294437L486.294921875,1926.0000305175781"
           id="my-svg-L_AUDIT_RETAIN_0"
           class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link"
           style="stroke-dasharray: 0 0 186.67185974121094 4; stroke-dashoffset: 0;;"
           data-edge="true"
           data-et="edge"
           data-id="L_AUDIT_RETAIN_0"
-          data-points="W3sieCI6NDE5LjU5NDkyMjM4MzYyNjMsInkiOjE1NzQuMDk5OTM1NDU2NDEyfSx7IngiOjQxOS41OTQ5MjIzODM2MjYzLCJ5IjoxNjAzLjQwMDAyNDQxNDA2MjV9LHsieCI6NDE5LjU5NDkyMjM4MzYyNjMsInkiOjE2MjMuNDAwMDI0NDE0MDYyNX0seyJ4Ijo0ODYuMjk0OTIxODc1LCJ5IjoxNjIzLjQwMDAyNDQxNDA2MjV9LHsieCI6NDg2LjI5NDkyMTg3NSwieSI6MTcwNy40MDAwMjQ0MTQwNjI1fV0="
+          data-points="W3sieCI6NDE5LjU5NDkyMjM4MzYyNjMsInkiOjE3OTYuNjk5OTQxNTU5OTI3NX0seyJ4Ijo0MTkuNTk0OTIyMzgzNjI2MywieSI6MTgyNi4wMDAwMzA1MTc1NzgxfSx7IngiOjQxOS41OTQ5MjIzODM2MjYzLCJ5IjoxODQ2LjAwMDAzMDUxNzU3ODF9LHsieCI6NDg2LjI5NDkyMTg3NSwieSI6MTg0Ni4wMDAwMzA1MTc1NzgxfSx7IngiOjQ4Ni4yOTQ5MjE4NzUsInkiOjE5MzAuMDAwMDMwNTE3NTc4MX1d"
           data-look="neo"
           marker-end="url(#my-svg_flowchart-v2-pointEnd-margin)"
         />
       </g>
       <g class="edgeLabels">
-        <g class="edgeLabel" transform="translate(87.5546875, 582.8000106811523)">
+        <g class="edgeLabel" transform="translate(233.48906199137366, 167.4000015258789)">
+          <g class="label" data-id="L_START_OWN_0" transform="translate(0, -12.000001907348633)">
+            <g><rect
+                class="background"
+                style=""
+                x="-74.0390625"
+                y="0.0000019073486328125"
+                width="148.078125"
+                height="24"
+              /><!-- prettier-ignore-start -->
+<text y="-10.1" text-anchor="middle" style=""><tspan
+    class="text-outer-tspan row"
+    x="0"
+    y="-0.1em"
+    dy="1.1em"
+    text-anchor="middle"
+  ><tspan font-style="normal" class="text-inner-tspan" font-weight="normal">recover</tspan><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    > command</tspan></tspan></text>
+<!-- prettier-ignore-end --></g>
+          </g>
+        </g>
+        <g class="edgeLabel" transform="translate(507.16152445475257, 167.4000015258789)">
+          <g
+            class="label"
+            data-id="L_START_OBSERVE_0"
+            transform="translate(-0.4951171875, -12.000001907348633)"
+          >
+            <g><rect
+                class="background"
+                style=""
+                x="-53.0390625"
+                y="0.0000019073486328125"
+                width="107.068359375"
+                height="24"
+              /><!-- prettier-ignore-start -->
+<text y="-10.1" text-anchor="middle" style=""><tspan
+    class="text-outer-tspan row"
+    x="0"
+    y="-0.1em"
+    dy="1.1em"
+    text-anchor="middle"
+  ><tspan font-style="normal" class="text-inner-tspan" font-weight="normal">observe</tspan><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    > only</tspan></tspan></text>
+<!-- prettier-ignore-end --></g>
+          </g>
+        </g>
+        <g class="edgeLabel" transform="translate(87.5546875, 805.400016784668)">
           <g class="label" data-id="L_OWN_RECON_0" transform="translate(0, -12.000001907348633)">
             <g><rect
                 class="background"
@@ -755,7 +834,7 @@
 <!-- prettier-ignore-end --></g>
           </g>
         </g>
-        <g class="edgeLabel" transform="translate(345.7578125, 423.00000762939453)">
+        <g class="edgeLabel" transform="translate(345.7578125, 566.3000106811523)">
           <g class="label" data-id="L_OWN_COMPUTE_0" transform="translate(0, -12.000001907348633)">
             <g><rect
                 class="background"
@@ -779,7 +858,7 @@
 <!-- prettier-ignore-end --></g>
           </g>
         </g>
-        <g class="edgeLabel" transform="translate(279.515625, 742.6000137329102)">
+        <g class="edgeLabel" transform="translate(279.515625, 965.2000198364258)">
           <g
             class="label"
             data-id="L_COMPUTE_DELETE_0"
@@ -807,7 +886,7 @@
 <!-- prettier-ignore-end --></g>
           </g>
         </g>
-        <g class="edgeLabel" transform="translate(224.5, 1142.900016784668)">
+        <g class="edgeLabel" transform="translate(224.5, 1365.5000228881836)">
           <g
             class="label"
             data-id="L_READ_UNKNOWN_0"
@@ -849,7 +928,7 @@
 <!-- prettier-ignore-end --></g>
           </g>
         </g>
-        <g class="edgeLabel" transform="translate(334.560546875, 1142.900016784668)">
+        <g class="edgeLabel" transform="translate(334.560546875, 1365.5000228881836)">
           <g
             class="label"
             data-id="L_READ_BACKUP_0"
@@ -877,7 +956,7 @@
 <!-- prettier-ignore-end --></g>
           </g>
         </g>
-        <g class="edgeLabel" transform="translate(415.318359375, 866.1000137329102)">
+        <g class="edgeLabel" transform="translate(415.318359375, 1088.7000198364258)">
           <g
             class="label"
             data-id="L_COMPUTE_BACKUP_0"
@@ -905,7 +984,7 @@
 <!-- prettier-ignore-end --></g>
           </g>
         </g>
-        <g class="edgeLabel" transform="translate(293.802734375, 1655.4000244140625)">
+        <g class="edgeLabel" transform="translate(293.802734375, 1878.0000305175781)">
           <g class="label" data-id="L_AUDIT_REMOVE_0" transform="translate(0, -12.000001907348633)">
             <g><rect
                 class="background"
@@ -929,7 +1008,7 @@
 <!-- prettier-ignore-end --></g>
           </g>
         </g>
-        <g class="edgeLabel" transform="translate(485.810546875, 1655.4000244140625)">
+        <g class="edgeLabel" transform="translate(485.810546875, 1878.0000305175781)">
           <g class="label" data-id="L_AUDIT_RETAIN_0" transform="translate(0, -12.000001907348633)">
             <g><rect
                 class="background"
@@ -959,7 +1038,7 @@
           class="node default primary"
           id="my-svg-flowchart-START-0"
           data-look="neo"
-          transform="translate(233.94999949137366, 63.70000076293945)"
+          transform="translate(345.85000101725257, 63.70000076293945)"
         >
           <rect
             class="basic label-container"
@@ -1013,7 +1092,7 @@
           class="node default"
           id="my-svg-flowchart-OWN-1"
           data-look="neo"
-          transform="translate(233.94999949137366, 263.2000045776367)"
+          transform="translate(233.94999949137366, 327.2000045776367)"
         >
           <polygon
             points="107.79999923706055,0 215.5999984741211,-107.79999923706055 107.79999923706055,-215.5999984741211 0,-107.79999923706055"
@@ -1041,9 +1120,174 @@
         </g>
         <g
           class="node default primary"
-          id="my-svg-flowchart-RECON-3"
+          id="my-svg-flowchart-OBSERVE-3"
           data-look="neo"
-          transform="translate(88, 866.1000137329102)"
+          transform="translate(507.62734476725257, 327.2000045776367)"
+        >
+          <rect
+            class="basic label-container"
+            style="fill:#eaf2ff !important;stroke:#3864a2 !important;stroke-width:2px !important"
+            x="-76"
+            y="-81.4000015258789"
+            width="152"
+            height="162.8000030517578"
+          />
+          <g
+            class="label"
+            style="color:#142b49 !important"
+            transform="translate(0, -69.4000015258789)"
+          >
+            <rect />
+            <g><rect class="background" style="stroke: none" /><!-- prettier-ignore-start -->
+<text y="-10.1" style="fill:#142b49 !important"><tspan
+    class="text-outer-tspan row"
+    x="0"
+    y="-0.1em"
+    dy="1.1em"
+  ><tspan font-style="normal" class="text-inner-tspan" font-weight="normal">wait</tspan><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    > JOB</tspan></tspan><tspan class="text-outer-tspan row" x="0" y="1em" dy="1.1em"><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    >Read</tspan><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    > local</tspan></tspan><tspan class="text-outer-tspan row" x="0" y="2.1em" dy="1.1em"><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    >status</tspan><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    > and</tspan></tspan><tspan class="text-outer-tspan row" x="0" y="3.2em" dy="1.1em"><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    >outcome</tspan></tspan><tspan
+    class="text-outer-tspan row"
+    x="0"
+    y="4.300000000000001em"
+    dy="1.1em"
+  ><tspan font-style="normal" class="text-inner-tspan" font-weight="normal">No</tspan><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    > cloud</tspan><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    > calls</tspan></tspan><tspan class="text-outer-tspan row" x="0" y="5.4em" dy="1.1em"><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    >or</tspan><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    > state</tspan></tspan><tspan
+    class="text-outer-tspan row"
+    x="0"
+    y="6.500000000000001em"
+    dy="1.1em"
+  ><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    >changes</tspan></tspan></text>
+<!-- prettier-ignore-end --></g>
+          </g>
+        </g>
+        <g
+          class="node default store"
+          id="my-svg-flowchart-WAITEND-5"
+          data-look="neo"
+          transform="translate(507.62734476725257, 566.3000106811523)"
+        >
+          <rect
+            class="basic label-container"
+            style="fill:#e7f5ef !important;stroke:#35745d !important;stroke-width:1.5px !important"
+            x="-76.0390625"
+            y="-91.30000305175781"
+            width="152.078125"
+            height="182.60000610351562"
+          />
+          <g
+            class="label"
+            style="color:#163c2f !important"
+            transform="translate(0, -79.30000305175781)"
+          >
+            <rect />
+            <g><rect class="background" style="stroke: none" /><!-- prettier-ignore-start -->
+<text y="-10.1" style="fill:#163c2f !important"><tspan
+    class="text-outer-tspan row"
+    x="0"
+    y="-0.1em"
+    dy="1.1em"
+  ><tspan font-style="normal" class="text-inner-tspan" font-weight="normal">End</tspan><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    > on</tspan></tspan><tspan class="text-outer-tspan row" x="0" y="1em" dy="1.1em"><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    >terminal</tspan></tspan><tspan class="text-outer-tspan row" x="0" y="2.1em" dy="1.1em"><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    >phase,</tspan></tspan><tspan class="text-outer-tspan row" x="0" y="3.2em" dy="1.1em"><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    >watchdog</tspan><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    > loss,</tspan></tspan><tspan
+    class="text-outer-tspan row"
+    x="0"
+    y="4.300000000000001em"
+    dy="1.1em"
+  ><tspan font-style="normal" class="text-inner-tspan" font-weight="normal">timeout</tspan><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    > or</tspan></tspan><tspan class="text-outer-tspan row" x="0" y="5.4em" dy="1.1em"><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    >Ctrl+C</tspan></tspan><tspan
+    class="text-outer-tspan row"
+    x="0"
+    y="6.500000000000001em"
+    dy="1.1em"
+  ><tspan font-style="normal" class="text-inner-tspan" font-weight="normal">Report</tspan><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    > status;</tspan></tspan><tspan
+    class="text-outer-tspan row"
+    x="0"
+    y="7.600000000000001em"
+    dy="1.1em"
+  ><tspan font-style="normal" class="text-inner-tspan" font-weight="normal">job</tspan><tspan
+      font-style="normal"
+      class="text-inner-tspan"
+      font-weight="normal"
+    > unaffected</tspan></tspan></text>
+<!-- prettier-ignore-end --></g>
+          </g>
+        </g>
+        <g
+          class="node default primary"
+          id="my-svg-flowchart-RECON-7"
+          data-look="neo"
+          transform="translate(88, 1088.7000198364258)"
         >
           <rect
             class="basic label-container"
@@ -1108,9 +1352,9 @@
         </g>
         <g
           class="node default caution"
-          id="my-svg-flowchart-UNKNOWN-5"
+          id="my-svg-flowchart-UNKNOWN-9"
           data-look="neo"
-          transform="translate(139.955078125, 1286.2000198364258)"
+          transform="translate(139.955078125, 1508.8000259399414)"
         >
           <rect
             class="basic label-container"
@@ -1181,9 +1425,9 @@
         </g>
         <g
           class="node default"
-          id="my-svg-flowchart-COMPUTE-7"
+          id="my-svg-flowchart-COMPUTE-11"
           data-look="neo"
-          transform="translate(346.25, 582.8000106811523)"
+          transform="translate(346.25, 805.400016784668)"
         >
           <polygon
             points="107.79999923706055,0 215.5999984741211,-107.79999923706055 107.79999923706055,-215.5999984741211 0,-107.79999923706055"
@@ -1215,9 +1459,9 @@
         </g>
         <g
           class="node default primary"
-          id="my-svg-flowchart-DELETE-9"
+          id="my-svg-flowchart-DELETE-13"
           data-look="neo"
-          transform="translate(280, 866.1000137329102)"
+          transform="translate(280, 1088.7000198364258)"
         >
           <rect
             class="basic label-container"
@@ -1278,9 +1522,9 @@
         </g>
         <g
           class="node default primary"
-          id="my-svg-flowchart-READ-11"
+          id="my-svg-flowchart-READ-15"
           data-look="neo"
-          transform="translate(280, 1029.3000144958496)"
+          transform="translate(280, 1251.9000205993652)"
         >
           <rect
             class="basic label-container"
@@ -1328,9 +1572,9 @@
         </g>
         <g
           class="node default primary"
-          id="my-svg-flowchart-BACKUP-15"
+          id="my-svg-flowchart-BACKUP-19"
           data-look="neo"
-          transform="translate(390.294921875, 1273.0000190734863)"
+          transform="translate(390.294921875, 1495.600025177002)"
         >
           <rect
             class="basic label-container"
@@ -1378,9 +1622,9 @@
         </g>
         <g
           class="node default"
-          id="my-svg-flowchart-AUDIT-19"
+          id="my-svg-flowchart-AUDIT-23"
           data-look="neo"
-          transform="translate(390.294921875, 1505.5000228881836)"
+          transform="translate(390.294921875, 1728.1000289916992)"
         >
           <polygon
             points="97.9000015258789,0 195.8000030517578,-97.9000015258789 97.9000015258789,-195.8000030517578 0,-97.9000015258789"
@@ -1412,9 +1656,9 @@
         </g>
         <g
           class="node default store"
-          id="my-svg-flowchart-REMOVE-21"
+          id="my-svg-flowchart-REMOVE-25"
           data-look="neo"
-          transform="translate(294.294921875, 1759.100025177002)"
+          transform="translate(294.294921875, 1981.7000312805176)"
         >
           <rect
             class="basic label-container"
@@ -1466,9 +1710,9 @@
         </g>
         <g
           class="node default caution"
-          id="my-svg-flowchart-RETAIN-23"
+          id="my-svg-flowchart-RETAIN-27"
           data-look="neo"
-          transform="translate(486.294921875, 1778.9000244140625)"
+          transform="translate(486.294921875, 2001.5000305175781)"
         >
           <rect
             class="basic label-container"
@@ -1554,7 +1798,7 @@
   </linearGradient><!-- prettier-ignore-start -->
 <text
   text-anchor="middle"
-  x="287.1474609375"
+  x="297.83319091796875"
   y="-25"
   class="flowchartTitleText"
 >Recover an existing job without guessing ownership</text>
