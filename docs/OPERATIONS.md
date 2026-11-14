@@ -153,6 +153,36 @@ they say so and change nothing:
 
 An ID needs at least four characters; shorter text is taken as a folder path.
 
+## Waiting for capacity
+
+`launch --wait-for-capacity MINUTES` repeats only after a definite no-capacity answer and proof that
+the attempt left no Pod and no volume. Between attempts it polls the read-only catalog every 75
+seconds; it does not repeatedly upload inputs while capacity is absent. The result names
+`capacity_rounds` and all `attempt_ledgers`. Inspect each ledger if a round failed during cleanup.
+This option also works with `--detach`; the capacity wait is in the foreground.
+
+- `Capacity round <n>: <outcome>; next round: <UTC or none>; allowance ends: <UTC>.`: one progress
+  line per round. Catalog-only rounds count too. `none` means no further round is scheduled,
+  including when the remaining allowance is shorter than the polling interval.
+- `Capacity waiting allowance expired.`: no new attempt starts; `no_capacity` remains code 4 when
+  every attempted creation has verified absence.
+- `No candidate reports Secure Cloud capacity in this round.`: the catalog is still empty; another
+  round is scheduled only while allowance remains.
+- `Capacity retry refused: the attempt's ledger does not prove that no Pod was created and no volume remains. Ledger: <folder>`:
+  no retry; inspect that ledger and the closing resource lines. A missing or unreadable cleanup
+  proof cannot become a no-capacity result. Resolve the resource state before another launch.
+- `Capacity wait interrupted; the last attempt's ledger verifies that nothing remains.`: Ctrl+C
+  during a pause or catalog poll; absence was rechecked in the ledger before this message.
+- `Capacity wait interrupted; the last attempt's ledger does not verify absence. Check the closing resource lines before assuming billing has ended.`:
+  Ctrl+C, but the last ledger cannot establish absence; inspect it before assuming billing ended.
+- `Capacity wait interrupted; no resource attempt created a ledger or resources.`: only catalog or
+  preflight checks ran before the interrupt.
+- `MINUTES must be a finite, nonnegative number.`: fix the option; zero disables additional rounds.
+
+Price, budget and API pacing failures stop capacity waiting. Ambiguous creates and rejections for
+other reasons are never repeated. A successful later attempt receives its full runtime allowance
+from its own Pod request, independent of the earlier waiting time. See [launch](MANUAL.md#launch).
+
 ## Read-only views
 
 `podvigil wait JOB [--timeout MINUTES]` reads the same ledger as `status`. It prints

@@ -413,7 +413,9 @@ def attempt_left_nothing(folder, wait_seconds=60, pause=time.sleep):
         pause(2)
 
 
-def launch_candidates(configs, ledgers=None, cleanup_wait=60, *, detach=False):
+def launch_candidates(
+    configs, ledgers=None, cleanup_wait=60, *, detach=False, capacity_deadline=None
+):
     """Launch on the first candidate, in the job file's order, that has capacity.
 
     The next candidate is tried only after a definite no-capacity answer (definite_no_capacity) and only
@@ -422,6 +424,8 @@ def launch_candidates(configs, ledgers=None, cleanup_wait=60, *, detach=False):
     """
     ledgers = [] if ledgers is None else ledgers
     for index, cfg in enumerate(configs, 1):
+        if capacity_deadline is not None and time.monotonic() >= capacity_deadline:
+            raise NoCapacity("Capacity waiting allowance expired.")
         label = f"candidate {index} of {len(configs)} ({cfg['gpu_id']} in {cfg['data_center_id']})"
         if len(configs) > 1:
             print("Trying " + label + ".", file=sys.stderr, flush=True)
@@ -439,7 +443,12 @@ def launch_candidates(configs, ledgers=None, cleanup_wait=60, *, detach=False):
                     f"None of the {len(configs)} candidates had capacity. Last answer: "
                     + public_message(exc)
                 ) from exc
-            if folder is not None and not attempt_left_nothing(folder, cleanup_wait):
+            remaining_cleanup = (
+                cleanup_wait
+                if capacity_deadline is None
+                else min(cleanup_wait, max(0, capacity_deadline - time.monotonic()))
+            )
+            if folder is not None and not attempt_left_nothing(folder, remaining_cleanup):
                 raise RuntimeError(
                     f"No capacity for {label}, but its volume deletion is not verified, so the "
                     "next candidate is not tried. Ledger: " + str(folder)

@@ -146,7 +146,7 @@ catalog).
 ## launch
 
 ```text
-podvigil launch <job file> [--detach]
+podvigil launch <job file> [--detach] [--wait-for-capacity MINUTES]
 ```
 
 Runs the job: checks, ledger, watchdog, volume, upload, Pod, supervision, recovery. This is the only
@@ -183,6 +183,47 @@ volume IDs, the watchdog's process ID and the deadline, and exits with code 9.
 - A job file with `self_termination_probe: true` is refused before anything is created: "launch
   --detach cannot run the self-termination probe (self_termination_probe): its result is known only
   at the end of the job. Nothing was created." The `hello-gpu` example has the probe on.
+
+**`--wait-for-capacity MINUTES`** adds capacity rounds after the ordinary initial round. Without
+this option, launch behavior is unchanged. The allowance is finite, nonnegative minutes; fractions
+are accepted. Zero runs the initial round and does not retry. The allowance starts with this
+command's first round; it limits further attempts, not a launched job's runtime or cleanup.
+
+A repeat requires both a definite no-capacity answer and a ledger proving no Pod was created and no
+volume remains. This includes the last candidate in the round. Ambiguous creates, other rejections,
+rate-limit errors, pricing failures and unverified cleanup end the command; they are never retried
+as capacity shortages. Even a confirmed-deleted Pod is not eligible for a repeat.
+
+A capacity refusal can happen after input upload. After a clean no-capacity round, the command waits
+75 seconds, then reads the catalog for every configured candidate in order, using the same Secure
+Cloud, GPU count, CUDA floor and standard-volume criteria as `survey`. It attempts only candidates
+reporting capacity. Catalog-only rounds do not create volumes or upload inputs. A new attempt still
+checks catalog capacity, price, compute limits and the Pod request size as usual, including another
+catalog check after uploads. Capacity is a hint, not a reservation.
+
+Catalog polling uses the configured client's shared API pacing, read retries and a deadline bounded
+by the remaining allowance. Price and the compute budget are checked in every round. Each actual
+attempt gets its own preparation allowance; the job's compute and startup deadlines are set from the
+provider's clock just before requesting its Pod. Capacity waiting does not shorten them.
+
+Standard error includes one line per round:
+
+```text
+Capacity round <n>: <outcome>; next round: <UTC or none>; allowance ends: <UTC>.
+```
+
+Existing launch diagnostics and resource lines still appear. The JSON result, including failure and
+interrupt results, adds `capacity_rounds` (the initial round plus catalog rounds) and
+`attempt_ledgers` (every created attempt ledger, in order). Catalog-only rounds have no ledger. Each
+attempt keeps its files; a later attempt never overwrites them. Expiry with verified absence returns
+the existing `no_capacity` outcome, code 4. A poll or cleanup already in progress can take time to
+return; expiry never bypasses cleanup verification.
+
+With `--detach`, capacity waiting stays in the foreground, then launch returns code 9 when its
+workload is released and guarded. Ctrl+C during a pause or catalog poll returns 130 without starting
+another attempt. The command rereads the last ledger before saying nothing remains. If it cannot
+verify absence, it says so and prints the ordinary resource lines. Ctrl+C inside an actual launch
+retains the behavior below.
 
 **Stopping a launch.** It depends on whether the workload was released yet:
 
